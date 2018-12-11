@@ -9,16 +9,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.webtree.auth.domain.AuthDetails;
+import org.webtree.auth.domain.WTUserDetails;
+import org.webtree.auth.service.UserAuthenticationService;
 
 
 @RestController
 @RequestMapping("/rest/user")
 public class UserController<T extends UserDetails> extends AbstractController {
 
-    private UserService service;
+    private UserAuthenticationService service;
 
     @Autowired
-    public UserController(UserService service) {
+    public UserController(UserAuthenticationService service) {
         this.service = service;
     }
 
@@ -26,14 +28,13 @@ public class UserController<T extends UserDetails> extends AbstractController {
     public ResponseEntity<?> register(@RequestBody AuthDetails authDetails) {
         int passwordLength = authDetails.getPassword().length();
 
-        if (passwordLength != 128) {
+        if (passwordLength != 128) { ///TODO: extracxt to validator
             return ResponseEntity.badRequest().body("The password must be a representation of sha512");
         }
 
-        if (service.register(authDetails)) {
-            return new ResponseEntity(HttpStatus.CREATED);
-        } else {
-            return ResponseEntity.badRequest().body("User with this username already exists.");
-        }
+        WTUserDetails userDetails = service.register(authDetails);
+        ResponseEntity responseEntity = new ResponseEntity(HttpStatus.CREATED);
+        responseEntity.getHeaders().add("id", userDetails.getId().toString());
+        return responseEntity;
     }
 }
