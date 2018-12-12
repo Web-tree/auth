@@ -7,15 +7,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.webtree.auth.domain.AuthDetails;
+import org.webtree.auth.domain.WTUserDetails;
 import org.webtree.auth.service.JwtTokenService;
 import org.webtree.auth.service.UserAuthenticationService;
-import org.webtree.trust.domain.AuthDetails;
-import org.webtree.trust.domain.TrustUser;
-import org.webtree.trust.service.TrustUserService;
-import org.webtree.trust.service.security.JwtTokenService;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -54,7 +50,7 @@ public class SecurityController extends AbstractController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UserDetails user = service.loadUserByUsername(authDetails.getUsername());
+        WTUserDetails user = service.loadUserByUsername(authDetails.getUsername());
         return ResponseEntity.ok(jwtTokenService.generateToken(user));
     }
 
@@ -63,7 +59,7 @@ public class SecurityController extends AbstractController {
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
         String token = request.getHeader(tokenHeader);
         String username = jwtTokenService.getUsernameFromToken(token);
-        UserDetails user = service.loadUserByUsername(username);
+        WTUserDetails user = service.loadUserByUsername(username);
 
         if (jwtTokenService.canTokenBeRefreshed(token, user.getLastPasswordResetDate())) {
             String refreshedToken = jwtTokenService.refreshToken(token);

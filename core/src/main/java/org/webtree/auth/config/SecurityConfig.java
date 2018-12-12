@@ -17,7 +17,6 @@ import org.webtree.auth.security.JwtAuthenticationTokenFilter;
 import org.webtree.auth.service.JwtTokenService;
 import org.webtree.auth.service.UserAuthenticationService;
 
-
 @ComponentScan("org.webtree.auth")
 @Configuration
 @EnableWebSecurity
@@ -26,19 +25,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserAuthenticationService userService;
     private final JwtTokenService tokenUtil;
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
+    private final AuthConfigurationProperties configurationProperties;
+
 
     @Autowired
-    public SecurityConfig(@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") UserAuthenticationService userService,
+    public SecurityConfig(UserAuthenticationService userService,
                           JwtTokenService tokenUtil,
-                          JwtAuthenticationEntryPoint unauthorizedHandler) {
+                          JwtAuthenticationEntryPoint unauthorizedHandler, AuthConfigurationProperties properties) {
         this.userService = userService;
         this.tokenUtil = tokenUtil;
         this.unauthorizedHandler = unauthorizedHandler;
+        this.configurationProperties = properties;
     }
 
     @Autowired
     public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder,
-                                        @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") UserAuthenticationService userService,
+                                        UserAuthenticationService userService,
                                         PasswordEncoder passwordEncoder) throws Exception {
 
         authenticationManagerBuilder
@@ -72,7 +74,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                .antMatchers("/rest/token/new", "/rest/user/register", "/rest/social/login").permitAll()
+                .antMatchers(configurationProperties.getNewTokenUrl(),
+                        configurationProperties.getRegisterUrl(),
+                        configurationProperties.getSocialLoginUrl()).permitAll()
                 .anyRequest().authenticated();
 
         // Custom JWT based security filter

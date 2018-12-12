@@ -32,7 +32,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private String tokenHeader;
 
     @Autowired
-    public JwtAuthenticationTokenFilter(@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") UserAuthenticationService service, JwtTokenService jwtTokenService) {
+    public JwtAuthenticationTokenFilter(UserAuthenticationService service, JwtTokenService jwtTokenService) {
         this.service = service;
         this.jwtTokenService = jwtTokenService;
     }

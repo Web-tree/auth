@@ -3,7 +3,6 @@ package org.webtree.auth.domain;
 import java.io.Serializable;
 import java.util.Objects;
 
-
 public class AuthDetailsImpl implements Serializable, AuthDetails {
     private static final long serialVersionUID = 6425650941625914226L;
     private String username;

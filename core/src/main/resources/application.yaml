@@ -1,6 +1,10 @@
 #Default profile
 server:
-              port: 9000
+  jetty:
+    accesslog:
+      enabled:
+
+
 spring:
   profiles:
     active: dev
