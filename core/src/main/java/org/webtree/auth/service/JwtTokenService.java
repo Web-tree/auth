@@ -1,17 +1,19 @@
 package org.webtree.auth.service;
 
-import com.google.common.annotations.VisibleForTesting;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.webtree.auth.domain.WTUserDetails;
 import org.webtree.auth.time.TimeProvider;
 
 
 import java.util.Date;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -61,12 +63,10 @@ public class JwtTokenService {
         return claimsResolver.apply(claims);
     }
 
-    @VisibleForTesting
     void setSecret(String secret) {
         this.secret = secret;
     }
 
-    @VisibleForTesting
     void setExpiration(Long expiration) {
         this.expiration = expiration;
     }
@@ -86,30 +86,13 @@ public class JwtTokenService {
     private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
         return (lastPasswordReset != null && created.before(lastPasswordReset));
     }
-/*
-    private String generateAudience(Device device) {
-        String audience = AUDIENCE_UNKNOWN;
-        if (device.isNormal()) {
-            audience = AUDIENCE_WEB;
-        } else if (device.isTablet()) {
-            audience = AUDIENCE_TABLET;
-        } else if (device.isMobile()) {
-            audience = AUDIENCE_MOBILE;
-        }
-        return audience;
-    }*/
 
-   /* private Boolean ignoreTokenExpiration(String token) {
-        String audience = getAudienceFromToken(token);
-        return (AUDIENCE_TABLET.equals(audience) || AUDIENCE_MOBILE.equals(audience));
-    }*/
-
-    public String generateToken(TrustUser trustUser/*, Device device*/) {
+    public String generateToken(WTUserDetails details) {
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, trustUser.getUsername(), trustUser.getId()/*, generateAudience(device)*/);
+        return doGenerateToken(claims, details.getUsername(), details.getId().toString());
     }
 
-    private String doGenerateToken(Map<String, Object> claims, String subject, String id/*, String audience*/) {
+    private String doGenerateToken(Map<String, Object> claims, String subject, String id ) {
         final Date createdDate = timeProvider.now();
         final Date expirationDate = calculateExpirationDate(createdDate);
 
@@ -118,7 +101,7 @@ public class JwtTokenService {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
-                /*.setAudience(audience)*/
+                .setId(id)
                 .setIssuedAt(createdDate)
                 .setExpiration(expirationDate)
                 .signWith(SignatureAlgorithm.HS512, secret)
@@ -144,13 +127,13 @@ public class JwtTokenService {
                 .compact();
     }
 
-    public Boolean validateToken(String token, TrustUser trustUser) {
+    public Boolean validateToken(String token, WTUserDetails user) {
         final String username = getUsernameFromToken(token);
         final Date created = getIssuedAtDateFromToken(token);
         //final Date expiration = getExpirationDateFromToken(token);
-        return username.equals(trustUser.getUsername()) &&
+        return username.equals(user.getUsername()) &&
                 !isTokenExpired(token) &&
-                !isCreatedBeforeLastPasswordReset(created, trustUser.getLastPasswordResetDate());
+                !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate());
     }
 
     private Date calculateExpirationDate(Date createdDate) {

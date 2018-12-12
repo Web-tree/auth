@@ -1,15 +1,18 @@
 package org.webtree.auth.security;
 
-
+import io.jsonwebtoken.ExpiredJwtException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.webtree.auth.domain.WTUserDetails;
 import org.webtree.auth.service.JwtTokenService;
+import org.webtree.auth.service.UserAuthenticationService;
 
 
 import javax.servlet.FilterChain;
@@ -22,15 +25,15 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     private static final Log logger = LogFactory.getLog(JwtAuthenticationTokenFilter.class);
 
-    private final UserService trustUserService;
+    private final UserAuthenticationService service;
     private final JwtTokenService jwtTokenService;
 
     @Value("${jwt.header}")
     private String tokenHeader;
 
     @Autowired
-    public JwtAuthenticationTokenFilter(UserService trustUserService, JwtTokenService jwtTokenService) {
-        this.trustUserService = trustUserService;
+    public JwtAuthenticationTokenFilter(@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") UserAuthenticationService service, JwtTokenService jwtTokenService) {
+        this.service = service;
         this.jwtTokenService = jwtTokenService;
     }
 
@@ -60,13 +63,13 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
             // It is not compelling necessary to load the use details from the database.
             // You could also store the information in the token and read it from it. It's up to you ;)
-            TrustUser trustUser = this.trustUserService.loadUserByUsername(username);
+            WTUserDetails user = this.service.loadUserByUsername(username);
 
             // For simple validation it is completely sufficient to just check the token integrity.
             // You don't have to call the database compellingly. Again it's up to you ;)
-            if (trustUser != null && jwtTokenService.validateToken(authToken, trustUser)) {
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(trustUser,
-                        null, trustUser.getAuthorities());
+            if (user != null && jwtTokenService.validateToken(authToken, user)) {
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user,
+                        null, user.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 logger.info("authenticated trustUser " + username + ", setting security context");
                 SecurityContextHolder.getContext().setAuthentication(authentication);

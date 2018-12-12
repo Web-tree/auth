@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.webtree.auth.security.JwtAuthenticationEntryPoint;
 import org.webtree.auth.security.JwtAuthenticationTokenFilter;
 import org.webtree.auth.service.JwtTokenService;
+import org.webtree.auth.service.UserAuthenticationService;
 
 
 @ComponentScan("org.webtree.auth")
@@ -22,22 +23,22 @@ import org.webtree.auth.service.JwtTokenService;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserService userService;
+    private final UserAuthenticationService userService;
     private final JwtTokenService tokenUtil;
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
 
     @Autowired
-    public SecurityConfig(UserService userService,
+    public SecurityConfig(@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") UserAuthenticationService userService,
                           JwtTokenService tokenUtil,
                           JwtAuthenticationEntryPoint unauthorizedHandler) {
-        this.userService = this.userService;
+        this.userService = userService;
         this.tokenUtil = tokenUtil;
         this.unauthorizedHandler = unauthorizedHandler;
     }
 
     @Autowired
     public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder,
-                                        UserService userService,
+                                        @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") UserAuthenticationService userService,
                                         PasswordEncoder passwordEncoder) throws Exception {
 
         authenticationManagerBuilder

@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.webtree.auth.domain.AuthDetails;
 import org.webtree.auth.service.JwtTokenService;
+import org.webtree.auth.service.UserAuthenticationService;
 import org.webtree.trust.domain.AuthDetails;
 import org.webtree.trust.domain.TrustUser;
 import org.webtree.trust.service.TrustUserService;
@@ -28,15 +29,15 @@ public class SecurityController extends AbstractController {
     private String tokenHeader;
 
     private JwtTokenService jwtTokenService;
-    private UserService trustUserService;
+    private UserAuthenticationService service;
 
     @Autowired
     public SecurityController(AuthenticationManager authenticationManager,
                               JwtTokenService jwtTokenService,
-                              UserService userService) {
+                              UserAuthenticationService userService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenService = jwtTokenService;
-        this.trustUserService = userService;
+        this.service = userService;
     }
 
     @PostMapping("${jwt.route.authentication.path}")
@@ -53,7 +54,7 @@ public class SecurityController extends AbstractController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UserDetails user = trustUserService.loadUserByUsername(authDetails.getUsername());
+        UserDetails user = service.loadUserByUsername(authDetails.getUsername());
         return ResponseEntity.ok(jwtTokenService.generateToken(user));
     }
 
@@ -62,7 +63,7 @@ public class SecurityController extends AbstractController {
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
         String token = request.getHeader(tokenHeader);
         String username = jwtTokenService.getUsernameFromToken(token);
-        UserDetails user = trustUserService.loadUserByUsername(username);
+        UserDetails user = service.loadUserByUsername(username);
 
         if (jwtTokenService.canTokenBeRefreshed(token, user.getLastPasswordResetDate())) {
             String refreshedToken = jwtTokenService.refreshToken(token);

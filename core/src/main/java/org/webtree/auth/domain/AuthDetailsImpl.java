@@ -69,12 +69,12 @@ public class AuthDetailsImpl implements Serializable, AuthDetails {
         AuthDetailsBuilder() {
         }
 
-        public AuthDetailsImpl.AuthDetailsBuilder username(String username) {
+        public AuthDetailsBuilder username(String username) {
             this.username = username;
             return this;
         }
 
-        public AuthDetailsImpl.AuthDetailsBuilder password(String password) {
+        public AuthDetailsBuilder password(String password) {
             this.password = password;
             return this;
         }
