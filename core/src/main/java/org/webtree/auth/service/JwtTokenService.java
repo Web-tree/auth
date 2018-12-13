@@ -1,6 +1,5 @@
 package org.webtree.auth.service;
 
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -28,6 +27,8 @@ public class JwtTokenService {
     static final String AUDIENCE_MOBILE = "mobile";
     static final String AUDIENCE_TABLET = "tablet";
     private static final long serialVersionUID = -3301605591108950415L;
+    //todo extract
+
     @Value("${jwt.secret}")
     private String secret;
 
@@ -92,7 +93,7 @@ public class JwtTokenService {
         return doGenerateToken(claims, details.getUsername(), details.getId().toString());
     }
 
-    private String doGenerateToken(Map<String, Object> claims, String subject, String id ) {
+    private String doGenerateToken(Map<String, Object> claims, String subject, String id) {
         final Date createdDate = timeProvider.now();
         final Date expirationDate = calculateExpirationDate(createdDate);
 
