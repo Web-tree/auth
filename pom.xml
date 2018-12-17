@@ -23,6 +23,7 @@
         <model-mapper.version>2.1.0</model-mapper.version>
         <assert-j-core.version>3.11.1</assert-j-core.version>
         <mockito-core.version>2.22.0</mockito-core.version>
+        <jackson-data-bind>2.9.4</jackson-data-bind>
     </properties>
 
     <repositories>
@@ -122,7 +123,11 @@
                 <artifactId>modelmapper</artifactId>
                 <version>${model-mapper.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-data-bind}</version>
+            </dependency>
             <!--Test-->
             <dependency>
                 <groupId>junit</groupId>

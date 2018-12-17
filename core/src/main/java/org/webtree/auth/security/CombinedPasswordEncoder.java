@@ -1,4 +1,4 @@
-package org.webtree.auth.service;
+package org.webtree.auth.security;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
