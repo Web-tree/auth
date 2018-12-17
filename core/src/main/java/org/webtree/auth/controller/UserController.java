@@ -1,30 +1,26 @@
 package org.webtree.auth.controller;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.webtree.auth.domain.AuthDetails;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.webtree.auth.domain.AuthDetailsImpl;
 import org.webtree.auth.domain.WTUserDetails;
 import org.webtree.auth.service.UserAuthenticationService;
 
 @RestController
-@RequestMapping("/rest/user")
+@RequestMapping
 public class UserController extends AbstractController {
 
     private UserAuthenticationService service;
-    private ModelMapper modelMapper;
 
     @Autowired
-    public UserController(UserAuthenticationService service, ModelMapper modelMapper) {
+    public UserController(UserAuthenticationService service) {
         this.service = service;
-        this.modelMapper = modelMapper;
     }
 
-    @PostMapping("register")
-    public WTUserDetails register(@RequestBody AuthDetails authDetails) {
+    @PostMapping("#{propertyBean.getRegisterUrl()}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public WTUserDetails register(@RequestBody AuthDetailsImpl authDetails) {
         return service.register(authDetails);
     }
 }
