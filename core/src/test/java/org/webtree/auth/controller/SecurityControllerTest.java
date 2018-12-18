@@ -15,7 +15,6 @@ import org.webtree.auth.domain.Token;
 import org.webtree.auth.service.UserAuthenticationService;
 
 public class SecurityControllerTest extends AbstractControllerTest {
-    private static final String PASSWORD = "HAT";
     private static final String TEST_USERNAME = "username_test";
     private static final String TOKEN = "NEKOT";
 

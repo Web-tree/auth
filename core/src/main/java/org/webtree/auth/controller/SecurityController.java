@@ -21,7 +21,7 @@ public class SecurityController extends AbstractController {
         this.service = userService;
     }
 
-    @PostMapping("#{propertyBean.getNewTokenUrl()}")
+    @PostMapping("#{AuthPropertiesBean.route.login}")
     public Token login(@RequestBody AuthDetailsImpl authDetails) {
         return service.login(authDetails);
     }

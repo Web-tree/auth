@@ -7,6 +7,8 @@ import org.webtree.auth.domain.AuthDetailsImpl;
 import org.webtree.auth.domain.WTUserDetails;
 import org.webtree.auth.service.UserAuthenticationService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping
 public class UserController extends AbstractController {
@@ -18,9 +20,9 @@ public class UserController extends AbstractController {
         this.service = service;
     }
 
-    @PostMapping("#{propertyBean.getRegisterUrl()}")
+    @PostMapping("#{AuthPropertiesBean.route.register}")
     @ResponseStatus(HttpStatus.CREATED)
-    public WTUserDetails register(@RequestBody AuthDetailsImpl authDetails) {
+    public WTUserDetails register(@RequestBody @Valid AuthDetailsImpl authDetails) {
         return service.register(authDetails);
     }
 }

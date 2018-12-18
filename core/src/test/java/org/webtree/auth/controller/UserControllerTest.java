@@ -17,7 +17,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class UserControllerTest extends AbstractControllerTest {
     private final static String USERNAME = "JOHN_SNOW";
-    private static final String PASSWORD = "HAT";
 
     @Autowired
     private MockMvc mockMvc;
