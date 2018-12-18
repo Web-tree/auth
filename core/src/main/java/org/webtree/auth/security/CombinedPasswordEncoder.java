@@ -18,8 +18,8 @@ public class CombinedPasswordEncoder implements PasswordEncoder {
     private PasswordEncoder encoder;
     private TextEncryptor encryptor;
 
-    public CombinedPasswordEncoder(@Value(("${spring.security.encoder.password}")) String password,
-                                   @Value(("${spring.security.encoder.salt}")) String salt) {
+    public CombinedPasswordEncoder(@Value(("#{AuthPropertiesBean.encoder.password}")) String password,
+                                   @Value(("#{AuthPropertiesBean.encoder.salt}")) String salt) {
         encoder = new BCryptPasswordEncoder();
         encryptor = Encryptors.delux(password, salt);
     }

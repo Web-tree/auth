@@ -29,10 +29,10 @@ public class JwtTokenService {
     private static final long serialVersionUID = -3301605591108950415L;
     //todo extract
 
-    @Value("${jwt.secret}")
+    @Value("#{AuthPropertiesBean.jwt.secret}")
     private String secret;
 
-    @Value("${jwt.expiration}")
+    @Value("#{AuthPropertiesBean.jwt.expiration}")
     private Long expiration;
 
     private TimeProvider timeProvider;

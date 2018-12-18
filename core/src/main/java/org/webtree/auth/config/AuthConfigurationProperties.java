@@ -1,35 +1,114 @@
 package org.webtree.auth.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-
-@ConfigurationProperties(prefix = "auth", ignoreUnknownFields = true)
+@Configuration("AuthPropertiesBean")
+@ConfigurationProperties(prefix = "auth")
 public class AuthConfigurationProperties {
-    private String registerUrl = "/rest/user/register";
-    private String newTokenUrl = "/rest/token/new";
-    private String socialLoginUrl = "/rest/social/login";
+    private final Route route = new Route();
+    private final Jwt jwt = new Jwt();
+    private final PasswordEncoder encoder = new PasswordEncoder();
+    private String frontendOrigin = "https://*.webtree.org";
 
-    public String getRegisterUrl() {
-        return registerUrl;
+    public String getFrontendOrigin() {
+        return frontendOrigin;
     }
 
-    public void setRegisterUrl(String registerUrl) {
-        this.registerUrl = registerUrl;
+    public void setFrontendOrigin(String frontendOrigin) {
+        this.frontendOrigin = frontendOrigin;
     }
 
-    public String getNewTokenUrl() {
-        return newTokenUrl;
+    public Route getRoute() {
+        return route;
     }
 
-    public void setNewTokenUrl(String newTokenUrl) {
-        this.newTokenUrl = newTokenUrl;
+    public Jwt getJwt() {
+        return jwt;
     }
 
-    public String getSocialLoginUrl() {
-        return socialLoginUrl;
+    public PasswordEncoder getEncoder() {
+        return encoder;
     }
 
-    public void setSocialLoginUrl(String socialLoginUrl) {
-        this.socialLoginUrl = socialLoginUrl;
+    public static class Route {
+        private String register = "/rest/user/register";
+        private String login = "/rest/token/new";
+        private String socialLogin = "/rest/social/login";
+
+        public String getRegister() {
+            return register;
+        }
+
+        public void setRegister(String register) {
+            this.register = register;
+        }
+
+        public String getLogin() {
+            return login;
+        }
+
+        public void setLogin(String login) {
+            this.login = login;
+        }
+
+        public String getSocialLogin() {
+            return socialLogin;
+        }
+
+        public void setSocialLogin(String socialLogin) {
+            this.socialLogin = socialLogin;
+        }
+    }
+
+    public static class Jwt {
+        private String header = "Authorization";
+        private String secret = " mySecret";
+        private Long expiration = 604800L;
+
+        public String getHeader() {
+            return header;
+        }
+
+        public void setHeader(String header) {
+            this.header = header;
+        }
+
+        public String getSecret() {
+            return secret;
+        }
+
+        public void setSecret(String secret) {
+            this.secret = secret;
+        }
+
+        public Long getExpiration() {
+            return expiration;
+        }
+
+        public void setExpiration(Long expiration) {
+            this.expiration = expiration;
+        }
+    }
+
+    public static class PasswordEncoder {
+        private String Salt = "9e0b5328c644e94c";
+        private String password = "passwordToChange";
+
+        public String getSalt() {
+            return Salt;
+        }
+
+        public void setSalt(String salt) {
+            Salt = salt;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
     }
 }

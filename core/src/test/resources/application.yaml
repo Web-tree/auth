@@ -1,0 +1,3 @@
+#Default profile
+server:
+ port: 9000

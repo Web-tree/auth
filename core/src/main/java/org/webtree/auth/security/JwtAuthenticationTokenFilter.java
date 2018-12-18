@@ -28,7 +28,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private final UserAuthenticationService service;
     private final JwtTokenService jwtTokenService;
 
-    @Value("${jwt.header}")
+    @Value("#{AuthPropertiesBean.jwt.header}")
     private String tokenHeader;
 
     @Autowired
@@ -71,7 +71,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user,
                         null, user.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                logger.info("authenticated trustUser " + username + ", setting security context");
+                logger.info("authenticated User " + username + ", setting security context");
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }

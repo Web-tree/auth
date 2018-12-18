@@ -25,7 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserAuthenticationService userService;
     private final JwtTokenService tokenUtil;
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
-    private final AuthConfigurationProperties configurationProperties;
+    private final AuthConfigurationProperties properties;
 
 
     @Autowired
@@ -35,12 +35,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.userService = userService;
         this.tokenUtil = tokenUtil;
         this.unauthorizedHandler = unauthorizedHandler;
-        this.configurationProperties = properties;
+        this.properties = properties;
     }
 
     @Autowired
     public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder,
-                                        UserAuthenticationService userService,
                                         PasswordEncoder passwordEncoder) throws Exception {
 
         authenticationManagerBuilder
@@ -74,9 +73,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                .antMatchers(configurationProperties.getNewTokenUrl(),
-                        configurationProperties.getRegisterUrl(),
-                        configurationProperties.getSocialLoginUrl()).permitAll()
+                .antMatchers(
+                        properties.getRoute().getLogin(),
+                        properties.getRoute().getRegister(),
+                        properties.getRoute().getSocialLogin()
+                ).permitAll()
                 .anyRequest().authenticated();
 
         // Custom JWT based security filter
