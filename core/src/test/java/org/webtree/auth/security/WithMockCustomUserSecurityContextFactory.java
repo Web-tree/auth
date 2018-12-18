@@ -5,7 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
-import org.webtree.auth.domain.WTUserDetails;
+import org.webtree.auth.domain.WtUserDetails;
 import org.webtree.auth.domain.WTUserDetailsImpl;
 
 public class WithMockCustomUserSecurityContextFactory
@@ -15,7 +15,7 @@ public class WithMockCustomUserSecurityContextFactory
     public SecurityContext createSecurityContext(WithMockCustomUser customUser) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-        WTUserDetails principal = new WTUserDetailsImpl(customUser.userId(), customUser.username());
+        WtUserDetails principal = new WTUserDetailsImpl(customUser.userId(), customUser.username());
 
         Authentication auth =
                 new UsernamePasswordAuthenticationToken(principal, "password", principal.getAuthorities());

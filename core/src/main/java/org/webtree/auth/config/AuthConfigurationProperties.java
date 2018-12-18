@@ -92,15 +92,15 @@ public class AuthConfigurationProperties {
     }
 
     public static class PasswordEncoder {
-        private String Salt = "9e0b5328c644e94c";
+        private String salt = "9e0b5328c644e94c";
         private String password = "passwordToChange";
 
         public String getSalt() {
-            return Salt;
+            return salt;
         }
 
         public void setSalt(String salt) {
-            Salt = salt;
+            this.salt = salt;
         }
 
         public String getPassword() {

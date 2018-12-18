@@ -8,7 +8,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.webtree.auth.domain.AuthDetails;
 import org.webtree.auth.domain.Token;
-import org.webtree.auth.domain.WTUserDetails;
+import org.webtree.auth.domain.WtUserDetails;
 import org.webtree.auth.repository.AuthRepository;
 
 import java.util.Optional;
@@ -23,7 +23,7 @@ public class UserAuthenticationServiceTest {
     @Mock
     private AuthRepository repository;
     @Mock
-    private WTUserDetails details;
+    private WtUserDetails details;
 
     private AbstractUserAuthenticationService service;
 
@@ -52,7 +52,7 @@ public class UserAuthenticationServiceTest {
             }
 
             @Override
-            public WTUserDetails register(AuthDetails userDetails) {
+            public WtUserDetails register(AuthDetails userDetails) {
                 return null;
             }
 

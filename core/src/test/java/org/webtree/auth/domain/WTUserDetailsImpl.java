@@ -5,7 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 import java.util.Date;
 
-public class WTUserDetailsImpl implements WTUserDetails<String> {
+public class WTUserDetailsImpl implements WtUserDetails<String> {
 
     private String id;
     private String username;

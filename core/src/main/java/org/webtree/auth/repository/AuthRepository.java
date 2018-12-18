@@ -1,11 +1,11 @@
 package org.webtree.auth.repository;
 
-import org.webtree.auth.domain.WTUserDetails;
+import org.webtree.auth.domain.WtUserDetails;
 
 import java.util.Optional;
 
 public interface AuthRepository {
-    Optional<WTUserDetails> findByUsername(String name);
+    Optional<WtUserDetails> findByUsername(String name);
 
-    WTUserDetails save(WTUserDetails e);
+    WtUserDetails save(WtUserDetails e);
 }
