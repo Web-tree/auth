@@ -1,0 +1,12 @@
+logging:
+ level:
+    com.datastax.driver.core.QueryLogger.NORMAL: DEBUG
+    com.datastax.driver.core.QueryLogger.SLOW: TRACE
+    org.springframework.security.authentication.dao: DEBUG
+
+spring:
+  data:
+    cassandra:
+      keyspace-name: trust_main
+      port: 9142
+      contact-points: localhost
