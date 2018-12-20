@@ -21,7 +21,6 @@ import org.webtree.auth.service.UserAuthenticationService;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
     private final UserAuthenticationService userService;
     private final JwtTokenService tokenUtil;
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
