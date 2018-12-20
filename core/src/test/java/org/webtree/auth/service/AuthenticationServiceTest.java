@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UserAuthenticationServiceTest {
+public class AuthenticationServiceTest {
     private static final String TEST_USERNAME = "Johnny";
 
     @Mock
@@ -25,7 +25,7 @@ public class UserAuthenticationServiceTest {
     @Mock
     private WtUserDetails details;
 
-    private AbstractUserAuthenticationService service;
+    private AbstractAuthenticationService service;
 
     @Before
     public void setUp() throws Exception {
@@ -44,20 +44,15 @@ public class UserAuthenticationServiceTest {
         service.loadUserByUsername(TEST_USERNAME);
     }
 
-    private AbstractUserAuthenticationService createService() {
-        return new AbstractUserAuthenticationService() {
-            @Override
-            protected AuthRepository getRepository() {
-                return repository;
-            }
-
+    private AbstractAuthenticationService createService() {
+        return new AbstractAuthenticationService(repository) {
             @Override
             public WtUserDetails register(AuthDetails userDetails) {
                 return null;
             }
 
             @Override
-            public Token login(AuthDetails userDetails) throws UsernameNotFoundException {
+            public Token login(AuthDetails userDetails) {
                 return null;
             }
         };

@@ -10,7 +10,7 @@ import org.webtree.auth.domain.AuthDetails;
 import org.webtree.auth.domain.AuthDetailsImpl;
 import org.webtree.auth.domain.Token;
 import org.webtree.auth.security.CombinedPasswordEncoder;
-import org.webtree.auth.service.UserAuthenticationService;
+import org.webtree.auth.service.AuthenticationService;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -25,7 +25,7 @@ public class AuthControllerTest extends AbstractControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private UserAuthenticationService service;
+    private AuthenticationService service;
     @MockBean
     private CombinedPasswordEncoder encoder;
     private AuthDetails authDetails;

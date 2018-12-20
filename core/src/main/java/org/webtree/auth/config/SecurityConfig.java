@@ -15,20 +15,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.webtree.auth.security.JwtAuthenticationEntryPoint;
 import org.webtree.auth.security.JwtAuthenticationTokenFilter;
 import org.webtree.auth.service.JwtTokenService;
-import org.webtree.auth.service.UserAuthenticationService;
+import org.webtree.auth.service.AuthenticationService;
 
 @ComponentScan("org.webtree.auth")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final UserAuthenticationService userService;
+    private final AuthenticationService userService;
     private final JwtTokenService tokenUtil;
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
     private final AuthConfigurationProperties properties;
 
 
     @Autowired
-    public SecurityConfig(UserAuthenticationService userService,
+    public SecurityConfig(AuthenticationService userService,
                           JwtTokenService tokenUtil,
                           JwtAuthenticationEntryPoint unauthorizedHandler, AuthConfigurationProperties properties) {
         this.userService = userService;

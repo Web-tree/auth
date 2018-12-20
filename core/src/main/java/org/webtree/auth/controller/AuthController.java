@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.webtree.auth.domain.AuthDetailsImpl;
 import org.webtree.auth.domain.Token;
 import org.webtree.auth.domain.WtUserDetails;
-import org.webtree.auth.service.UserAuthenticationService;
+import org.webtree.auth.service.AuthenticationService;
 
 import javax.validation.Valid;
 
@@ -20,10 +20,10 @@ import javax.validation.Valid;
 @CrossOrigin(value = "#{AuthPropertiesBean.frontendOrigin}")
 public class AuthController {
 
-    private UserAuthenticationService service;
+    private AuthenticationService service;
 
     @Autowired
-    public AuthController(UserAuthenticationService service) {
+    public AuthController(AuthenticationService service) {
         this.service = service;
     }
 
@@ -34,7 +34,7 @@ public class AuthController {
     }
 
     @PostMapping("#{AuthPropertiesBean.route.login}")
-    public Token login(@RequestBody AuthDetailsImpl authDetails) {
+    public Token login(@RequestBody @Valid AuthDetailsImpl authDetails) {
         return service.login(authDetails);
     }
 }
