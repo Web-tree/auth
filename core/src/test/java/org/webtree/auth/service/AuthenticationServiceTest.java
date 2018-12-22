@@ -1,7 +1,7 @@
 package org.webtree.auth.service;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -14,6 +14,7 @@ import org.webtree.auth.repository.AuthRepository;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -27,7 +28,7 @@ public class AuthenticationServiceTest {
 
     private AbstractAuthenticationService service;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         service = createService();
     }
@@ -38,10 +39,11 @@ public class AuthenticationServiceTest {
         assertThat(service.loadUserByUsername(TEST_USERNAME)).isEqualTo(details);
     }
 
-    @Test(expected = UsernameNotFoundException.class)
+    @Test
     public void shouldThrowExceptionIfUserWasNotFound() {
         given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.empty());
-        service.loadUserByUsername(TEST_USERNAME);
+        assertThatThrownBy(() -> service.loadUserByUsername(TEST_USERNAME))
+                .isInstanceOf(UsernameNotFoundException.class);
     }
 
     private AbstractAuthenticationService createService() {

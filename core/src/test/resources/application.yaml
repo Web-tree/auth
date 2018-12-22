@@ -1,3 +1,5 @@
 #Default profile
 server:
  port: 9000
+auth:
+  details: org.webtree.auth.domain.AuthDetailsImpl

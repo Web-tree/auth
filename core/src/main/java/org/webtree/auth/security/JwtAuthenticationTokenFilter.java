@@ -10,8 +10,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.webtree.auth.domain.WtUserDetails;
-import org.webtree.auth.service.JwtTokenService;
 import org.webtree.auth.service.AuthenticationService;
+import org.webtree.auth.service.JwtTokenService;
 
 
 import java.io.IOException;

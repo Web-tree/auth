@@ -14,8 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.webtree.auth.security.JwtAuthenticationEntryPoint;
 import org.webtree.auth.security.JwtAuthenticationTokenFilter;
-import org.webtree.auth.service.JwtTokenService;
 import org.webtree.auth.service.AuthenticationService;
+import org.webtree.auth.service.JwtTokenService;
 
 @ComponentScan("org.webtree.auth")
 @Configuration

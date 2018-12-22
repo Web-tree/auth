@@ -2,6 +2,8 @@ package org.webtree.auth.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.webtree.auth.domain.AuthDetails;
+import org.webtree.auth.domain.AuthDetailsImpl;
 
 @Configuration("AuthPropertiesBean")
 @ConfigurationProperties(prefix = "auth")
@@ -9,6 +11,16 @@ public class AuthConfigurationProperties {
     private final Route route = new Route();
     private final Jwt jwt = new Jwt();
     private final PasswordEncoder encoder = new PasswordEncoder();
+    private Class<? extends AuthDetails> details = AuthDetailsImpl.class;
+
+    public Class<? extends AuthDetails> getDetails() {
+        return details;
+    }
+
+    public void setDetails(Class<? extends AuthDetails> details) {
+        this.details = details;
+    }
+
     private String frontendOrigin = "https://*.webtree.org";
 
     public String getFrontendOrigin() {
