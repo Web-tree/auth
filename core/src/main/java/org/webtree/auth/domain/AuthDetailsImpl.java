@@ -1,5 +1,8 @@
 package org.webtree.auth.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.webtree.auth.deserializer.EncodePasswordDeserializer;
+
 import java.io.Serializable;
 import java.util.Objects;
 import javax.validation.constraints.Size;
@@ -7,8 +10,6 @@ import javax.validation.constraints.Size;
 public class AuthDetailsImpl implements Serializable, AuthDetails {
     private static final long serialVersionUID = 6425650941625914226L;
     private String username;
-
-    @Size(min = 128, max = 128, message = "Password should be a representation of sha512")
     private String password;
 
     public AuthDetailsImpl(String username, String password) {
@@ -17,6 +18,14 @@ public class AuthDetailsImpl implements Serializable, AuthDetails {
     }
 
     public AuthDetailsImpl() {
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    @JsonDeserialize(using = EncodePasswordDeserializer.class)
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

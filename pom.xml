@@ -24,6 +24,7 @@
         <assert-j-core.version>3.11.1</assert-j-core.version>
         <mockito-core.version>2.22.0</mockito-core.version>
         <jackson-data-bind>2.9.4</jackson-data-bind>
+        <mockito-junit-jupiter-version>2.23.0</mockito-junit-jupiter-version>
     </properties>
 
     <repositories>
@@ -154,10 +155,15 @@
                 <artifactId>assertj-core</artifactId>
                 <version>${assert-j-core.version}</version>
             </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.mockito</groupId>-->
+                <!--<artifactId>mockito-core</artifactId>-->
+                <!--<version>${mockito-core.version}</version>-->
+            <!--</dependency>-->
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>${mockito-core.version}</version>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${mockito-junit-jupiter-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
