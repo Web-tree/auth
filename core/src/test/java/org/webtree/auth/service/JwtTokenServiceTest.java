@@ -2,12 +2,12 @@ package org.webtree.auth.service;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import org.assertj.core.util.DateUtil;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.webtree.auth.domain.WtUserDetails;
 import org.webtree.auth.time.TimeProvider;
 
@@ -16,12 +16,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class JwtTokenServiceTest {
     private static final String TEST_USERNAME = "testUser";
     private static final String USER_ID = "someUserId";
@@ -33,12 +34,12 @@ public class JwtTokenServiceTest {
     @InjectMocks
     private JwtTokenService jwtTokenService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         jwtTokenService.setExpiration(3600L);
         jwtTokenService.setSecret("mySecret");
-       given( details.getId()).willReturn(USER_ID);
-        given( details.getUsername()).willReturn(TEST_USERNAME);
+        given(details.getId()).willReturn(USER_ID);
+        given(details.getUsername()).willReturn(TEST_USERNAME);
 
     }
 
@@ -84,12 +85,13 @@ public class JwtTokenServiceTest {
         assertThat(DateUtil.timeDifference(expirationDateFromToken, now)).isCloseTo(3600000L, within(1000L));
     }
 
-    @Test(expected = ExpiredJwtException.class)
+    @Test
     public void expiredTokenCannotBeRefreshed() {
         when(timeProviderMock.now())
                 .thenReturn(DateUtil.yesterday());
         String token = createToken();
-        jwtTokenService.canTokenBeRefreshed(token, DateUtil.tomorrow());
+        assertThatThrownBy(() -> jwtTokenService.canTokenBeRefreshed(token, DateUtil.tomorrow()))
+                .isInstanceOf(ExpiredJwtException.class);
     }
 
     @Test

@@ -23,6 +23,7 @@ public class AuthDetailsImpl implements Serializable, AuthDetails {
     public void setUsername(String username) {
         this.username = username;
     }
+
     @JsonDeserialize(using = EncodePasswordDeserializer.class)
     public void setPassword(String password) {
         this.password = password;

@@ -31,7 +31,8 @@ public class AuthDetailsRequestBodyProcessor extends RequestResponseBodyMethodPr
     }
 
     @Override
-    protected <T> Object readWithMessageConverters(NativeWebRequest webRequest, MethodParameter parameter, Type paramType)
+    protected <T> Object readWithMessageConverters(NativeWebRequest webRequest,
+                                                   MethodParameter parameter, Type paramType)
             throws IOException, HttpMediaTypeNotSupportedException, HttpMessageNotReadableException {
         return super.readWithMessageConverters(webRequest, parameter, detailsImplClass);
     }
