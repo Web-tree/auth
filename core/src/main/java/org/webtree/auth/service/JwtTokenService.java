@@ -23,10 +23,10 @@ public class JwtTokenService {
     static final String CLAIM_KEY_CREATED = "iat";
     //todo extract
 
-    @Value("#{AuthPropertiesBean.jwt.secret}")
+    @Value("${auth.jwt.secret}")
     private String secret;
 
-    @Value("#{AuthPropertiesBean.jwt.expiration}")
+    @Value("${auth.jwt.expiration}")
     private Long expiration;
 
     private TimeProvider timeProvider;

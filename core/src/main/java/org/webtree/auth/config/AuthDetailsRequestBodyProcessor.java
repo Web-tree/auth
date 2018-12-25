@@ -21,7 +21,7 @@ public class AuthDetailsRequestBodyProcessor extends RequestResponseBodyMethodPr
         super(converters);
     }
 
-    @Value("#{AuthPropertiesBean.details}")
+    @Value("${auth.auth-details-impl}")
     private Class<? extends AuthDetails> detailsImplClass;
 
 
