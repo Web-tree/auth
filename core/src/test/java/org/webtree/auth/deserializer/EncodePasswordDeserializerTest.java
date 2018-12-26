@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class EncodePasswordDeserializerTest {
+class EncodePasswordDeserializerTest {
     private final static String STRING_BEFORE_ENCODING =
             "a1b2a1b2a1b2a1b2a1b2a1b2a1b2a1b2" +
                     "a1b2a1b2a1b2a1b2a1b2a1b2a1b2a1b2" +

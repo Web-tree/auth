@@ -21,7 +21,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthenticationServiceTest {
+class AuthenticationServiceTest {
     private static final String TEST_USERNAME = "Johnny";
 
     @Mock
@@ -37,13 +37,13 @@ public class AuthenticationServiceTest {
     }
 
     @Test
-    public void shouldReturnUserByUsername() {
+    void shouldReturnUserByUsername() {
         given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.of(details));
         assertThat(service.loadUserByUsername(TEST_USERNAME)).isEqualTo(details);
     }
 
     @Test
-    public void shouldThrowExceptionIfUserWasNotFound() {
+    void shouldThrowExceptionIfUserWasNotFound() {
         given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.empty());
         assertThatThrownBy(() -> service.loadUserByUsername(TEST_USERNAME))
                 .isInstanceOf(UsernameNotFoundException.class);

@@ -39,12 +39,12 @@ public class AuthControllerTest extends AbstractControllerTest {
         super.setUp();
         given(encoder.encode(PASSWORD)).willReturn(ENCODED_PASSWORD);
         authDetails = new AuthDetailsImpl(USERNAME, PASSWORD);
-        authDetailsWithEncodedPassword  = new AuthDetailsImpl(USERNAME, encoder.encode(PASSWORD));
+        authDetailsWithEncodedPassword = new AuthDetailsImpl(USERNAME, encoder.encode(PASSWORD));
         token = () -> TOKEN;
     }
 
     @Test
-    public void shouldReturn2XxOkIfUserDoesNotExist() throws Exception {
+    void shouldReturn2XxOkIfUserDoesNotExist() throws Exception {
         mockMvc
                 .perform(post("/rest/user/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -54,7 +54,7 @@ public class AuthControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void whenLoginWithExistedUser_shouldReturnToken() throws Exception {
+    void whenLoginWithExistedUser_shouldReturnToken() throws Exception {
         given(service.login(authDetailsWithEncodedPassword)).willReturn(token);
         mockMvc.perform(
                 post("/rest/token/new")

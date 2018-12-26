@@ -9,7 +9,7 @@ import org.webtree.auth.AbstractSpringTest;
 
 @AutoConfigureMockMvc
 public abstract class AbstractControllerTest extends AbstractSpringTest {
-    protected static final String PASSWORD =
+    static final String PASSWORD =
             "a1b2a1b2a1b2a1b2a1b2a1b2a1b2a1b2" +
                     "a1b2a1b2a1b2a1b2a1b2a1b2a1b2a1b2" +
                     "a1b2a1b2a1b2a1b2a1b2a1b2a1b2a1b2" +
