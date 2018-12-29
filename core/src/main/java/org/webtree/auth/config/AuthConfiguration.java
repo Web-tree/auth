@@ -16,6 +16,10 @@ public class AuthConfiguration {
     @Value("${auth.wt-user-impl}")
     private Class<? extends WtUserDetails> entity;
 
+    protected Class<? extends WtUserDetails> getEntityClass() {
+        return entity;
+    }
+
     @Autowired
     private AuthenticationServiceImpl service;
 

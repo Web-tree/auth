@@ -9,7 +9,6 @@ import java.util.Optional;
 
 import static org.springframework.data.cassandra.core.query.Criteria.where;
 
-@Repository
 public class CassandraAuthRepositoryImpl implements CassandraAuthRepository {
     private CassandraOperations operations;
     private Class<? extends WtUserDetails> aClass;
@@ -28,7 +27,7 @@ public class CassandraAuthRepositoryImpl implements CassandraAuthRepository {
     }
 
     @Override
-    public WtUserDetails save(WtUserDetails e) {
+    public WtUserDetails saveIfNotExists(WtUserDetails e) {
         operations.insert(e);
         return e;
     }

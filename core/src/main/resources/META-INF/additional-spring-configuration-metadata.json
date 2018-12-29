@@ -49,6 +49,11 @@
       "name": "auth.auth-details-impl",
       "type": "java.lang.String",
       "description": "Implementation of AuthDetails that is deserialized from request body from frontend."
+    },
+    {
+      "name": "auth.wt-user-impl",
+      "type": "java.lang.String",
+      "description": "WTUserDetails implementation."
     }
   ]
 }

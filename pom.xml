@@ -11,20 +11,23 @@
 
     <modules>
         <module>core</module>
+        <module>cassandra</module>
     </modules>
 
     <properties>
         <spring-boot.version>2.0.5.RELEASE</spring-boot.version>
         <spring-core.version>5.1.0.RELEASE</spring-core.version>
+        <spring-data-cassandra>2.0.6.RELEASE</spring-data-cassandra>
         <jjwt.version>0.7.0</jjwt.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <junit.version>5.3.2</junit.version>
-        <model-mapper.version>2.1.0</model-mapper.version>
+        <model-modelMapper.version>2.1.0</model-modelMapper.version>
         <assert-j-core.version>3.11.1</assert-j-core.version>
         <mockito-core.version>2.22.0</mockito-core.version>
         <jackson-data-bind>2.9.4</jackson-data-bind>
         <mockito-junit-jupiter-version>2.23.0</mockito-junit-jupiter-version>
+        <cassandra-unit.version>3.3.0.2</cassandra-unit.version>
     </properties>
 
     <repositories>
@@ -115,6 +118,11 @@
                 <version>${spring-boot.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-cassandra</artifactId>
+                <version>${spring-data-cassandra}</version>
+            </dependency>
+            <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt</artifactId>
                 <version>${jjwt.version}</version>
@@ -122,14 +130,13 @@
             <dependency>
                 <groupId>org.modelmapper</groupId>
                 <artifactId>modelmapper</artifactId>
-                <version>${model-mapper.version}</version>
+                <version>${model-modelMapper.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson-data-bind}</version>
             </dependency>
-
             <!--Test-->
 
             <dependency>
@@ -174,6 +181,11 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-junit-jupiter</artifactId>
                 <version>${mockito-junit-jupiter-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.cassandraunit</groupId>
+                <artifactId>cassandra-unit</artifactId>
+                <version>${cassandra-unit.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

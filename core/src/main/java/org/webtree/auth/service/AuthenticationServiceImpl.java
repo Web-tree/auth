@@ -3,12 +3,14 @@ package org.webtree.auth.service;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 import org.webtree.auth.domain.AuthDetails;
 import org.webtree.auth.domain.Token;
 import org.webtree.auth.domain.WtUserDetails;
 import org.webtree.auth.repository.AuthRepository;
 
-public class AbstractAuthenticationService implements AuthenticationService {
+@Service
+public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtTokenService jwtTokenService;
     private AuthRepository repository;
     private ModelMapper modelMapper;
@@ -18,7 +20,7 @@ public class AbstractAuthenticationService implements AuthenticationService {
         this.entityClass = entityClass;
     }
 
-    public AbstractAuthenticationService(AuthRepository repository, JwtTokenService service, ModelMapper modelMapper) {
+    public AuthenticationServiceImpl(AuthRepository repository, JwtTokenService service, ModelMapper modelMapper) {
         this.jwtTokenService = service;
         this.repository = repository;
         this.modelMapper = modelMapper;

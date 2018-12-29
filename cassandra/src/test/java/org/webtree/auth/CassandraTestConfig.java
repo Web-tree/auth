@@ -1,6 +1,7 @@
 package org.webtree.auth;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
 import org.springframework.data.cassandra.config.SchemaAction;
@@ -14,13 +15,8 @@ import org.webtree.auth.domain.WtUserDetails;
 import java.util.Collections;
 import java.util.List;
 
-@Configuration
+@SpringBootConfiguration
 public class CassandraTestConfig extends AbstractCassandraDriverConfiguration {
-
-    @Override
-    public Class<? extends WtUserDetails> getEntityClass() {
-        return WTUserDetailsImpl.class;
-    }
 
     @Configuration
     @EnableCassandraRepositories("org.webtree.auth.repository")

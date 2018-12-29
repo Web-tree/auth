@@ -12,3 +12,4 @@ auth:
      social-login: /rest/social/login
      register: /rest/user/register
   frontend-origin: "https://*.webtree.org"
+#  wt-user-impl: org.webtree.auth.domain.WTUserDetailsImpl
