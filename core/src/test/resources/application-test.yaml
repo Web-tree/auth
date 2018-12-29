@@ -1,3 +1,5 @@
 #Default profile
 server:
  port: 9000
+auth:
+  wt-user-impl: org.webtree.auth.domain.WtUserDetails

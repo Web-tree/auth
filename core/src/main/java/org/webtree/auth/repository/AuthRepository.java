@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface AuthRepository {
     Optional<WtUserDetails> findByUsername(String name);
 
-    WtUserDetails save(WtUserDetails e);
+    WtUserDetails saveIfNotExists(WtUserDetails e);
 }
