@@ -2,12 +2,12 @@ package org.webtree.auth.service;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import org.assertj.core.util.DateUtil;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.webtree.auth.domain.WtUserDetails;
 import org.webtree.auth.time.TimeProvider;
 
@@ -16,12 +16,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class JwtTokenServiceTest {
     private static final String TEST_USERNAME = "testUser";
     private static final String USER_ID = "someUserId";
@@ -33,17 +34,17 @@ public class JwtTokenServiceTest {
     @InjectMocks
     private JwtTokenService jwtTokenService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         jwtTokenService.setExpiration(3600L);
         jwtTokenService.setSecret("mySecret");
-       given( details.getId()).willReturn(USER_ID);
-        given( details.getUsername()).willReturn(TEST_USERNAME);
+        given(details.getId()).willReturn(USER_ID);
+        given(details.getUsername()).willReturn(TEST_USERNAME);
 
     }
 
     @Test
-    public void testGenerateTokenGeneratesDifferentTokensForDifferentCreationDates() {
+    void testGenerateTokenGeneratesDifferentTokensForDifferentCreationDates() {
         when(timeProviderMock.now())
                 .thenReturn(DateUtil.yesterday())
                 .thenReturn(DateUtil.now());
@@ -55,7 +56,7 @@ public class JwtTokenServiceTest {
     }
 
     @Test
-    public void getUsernameFromToken() {
+    void getUsernameFromToken() {
         when(timeProviderMock.now()).thenReturn(DateUtil.now());
 
         final String token = createToken();
@@ -65,7 +66,7 @@ public class JwtTokenServiceTest {
 
 
     @Test
-    public void getCreatedDateFromToken() {
+    void getCreatedDateFromToken() {
         final Date now = DateUtil.now();
         when(timeProviderMock.now()).thenReturn(now);
 
@@ -75,7 +76,7 @@ public class JwtTokenServiceTest {
     }
 
     @Test
-    public void getExpirationDateFromToken() {
+    void getExpirationDateFromToken() {
         final Date now = DateUtil.now();
         when(timeProviderMock.now()).thenReturn(now);
         final String token = createToken();
@@ -84,16 +85,17 @@ public class JwtTokenServiceTest {
         assertThat(DateUtil.timeDifference(expirationDateFromToken, now)).isCloseTo(3600000L, within(1000L));
     }
 
-    @Test(expected = ExpiredJwtException.class)
-    public void expiredTokenCannotBeRefreshed() {
+    @Test
+    void expiredTokenCannotBeRefreshed() {
         when(timeProviderMock.now())
                 .thenReturn(DateUtil.yesterday());
         String token = createToken();
-        jwtTokenService.canTokenBeRefreshed(token, DateUtil.tomorrow());
+        assertThatThrownBy(() -> jwtTokenService.canTokenBeRefreshed(token, DateUtil.tomorrow()))
+                .isInstanceOf(ExpiredJwtException.class);
     }
 
     @Test
-    public void changedPasswordCannotBeRefreshed() {
+    void changedPasswordCannotBeRefreshed() {
         when(timeProviderMock.now())
                 .thenReturn(DateUtil.now());
         String token = createToken();
@@ -101,7 +103,7 @@ public class JwtTokenServiceTest {
     }
 
     @Test
-    public void notExpiredCanBeRefreshed() {
+    void notExpiredCanBeRefreshed() {
         when(timeProviderMock.now())
                 .thenReturn(DateUtil.now());
         String token = createToken();
@@ -109,7 +111,7 @@ public class JwtTokenServiceTest {
     }
 
     @Test
-    public void canRefreshToken() {
+    void canRefreshToken() {
         when(timeProviderMock.now())
                 .thenReturn(DateUtil.now())
                 .thenReturn(DateUtil.tomorrow());
@@ -121,7 +123,7 @@ public class JwtTokenServiceTest {
     }
 
     @Test
-    public void canValidateToken() {
+    void canValidateToken() {
         when(timeProviderMock.now())
                 .thenReturn(DateUtil.now());
         WtUserDetails details = mock(WtUserDetails.class);

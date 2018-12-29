@@ -1,7 +1,7 @@
 package org.webtree.auth.controller;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -10,7 +10,7 @@ import org.webtree.auth.domain.AuthDetails;
 import org.webtree.auth.domain.AuthDetailsImpl;
 import org.webtree.auth.domain.Token;
 import org.webtree.auth.security.CombinedPasswordEncoder;
-import org.webtree.auth.service.UserAuthenticationService;
+import org.webtree.auth.service.AuthenticationService;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -21,37 +21,41 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AuthControllerTest extends AbstractControllerTest {
     private final static String USERNAME = "JOHN_SNOW";
     private static final String TOKEN = "NEKOT";
+    private static final String ENCODED_PASSWORD = "PASSWORD_THAT_ENCODED";
 
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private UserAuthenticationService service;
+    private AuthenticationService service;
     @MockBean
     private CombinedPasswordEncoder encoder;
     private AuthDetails authDetails;
+    private AuthDetails authDetailsWithEncodedPassword;
     private Token token;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() {
         super.setUp();
-        authDetails = new AuthDetailsImpl(USERNAME,PASSWORD);
+        given(encoder.encode(PASSWORD)).willReturn(ENCODED_PASSWORD);
+        authDetails = new AuthDetailsImpl(USERNAME, PASSWORD);
+        authDetailsWithEncodedPassword = new AuthDetailsImpl(USERNAME, encoder.encode(PASSWORD));
         token = () -> TOKEN;
     }
 
     @Test
-    public void shouldReturn2XxOkIfUserDoesNotExist() throws Exception {
+    void shouldReturn2XxOkIfUserDoesNotExist() throws Exception {
         mockMvc
                 .perform(post("/rest/user/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authDetails)))
                 .andExpect(status().isCreated());
-        verify(service).register(authDetails);
+        verify(service).register(authDetailsWithEncodedPassword);
     }
 
     @Test
-    public void whenLoginWithExistedUser_shouldReturnToken() throws Exception {
-        given(service.login(authDetails)).willReturn(token);
+    void whenLoginWithExistedUser_shouldReturnToken() throws Exception {
+        given(service.login(authDetailsWithEncodedPassword)).willReturn(token);
         mockMvc.perform(
                 post("/rest/token/new")
                         .contentType(MediaType.APPLICATION_JSON)

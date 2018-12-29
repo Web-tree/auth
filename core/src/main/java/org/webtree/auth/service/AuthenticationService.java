@@ -6,11 +6,11 @@ import org.webtree.auth.domain.AuthDetails;
 import org.webtree.auth.domain.Token;
 import org.webtree.auth.domain.WtUserDetails;
 
-public interface UserAuthenticationService extends UserDetailsService {
+public interface AuthenticationService extends UserDetailsService {
     WtUserDetails register(AuthDetails userDetails);
 
-    Token login(AuthDetails userDetails) throws UsernameNotFoundException;
+    Token login(AuthDetails userDetails);
 
     @Override
-    WtUserDetails loadUserByUsername(String s) throws UsernameNotFoundException;
+    WtUserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 }

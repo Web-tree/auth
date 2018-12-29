@@ -10,8 +10,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.webtree.auth.domain.WtUserDetails;
+import org.webtree.auth.service.AuthenticationService;
 import org.webtree.auth.service.JwtTokenService;
-import org.webtree.auth.service.UserAuthenticationService;
 
 
 import java.io.IOException;
@@ -24,14 +24,14 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     private static final Log logger = LogFactory.getLog(JwtAuthenticationTokenFilter.class);
 
-    private final UserAuthenticationService service;
+    private final AuthenticationService service;
     private final JwtTokenService jwtTokenService;
 
-    @Value("#{AuthPropertiesBean.jwt.header}")
+    @Value("${auth.jwt.header}")
     private String tokenHeader;
 
     @Autowired
-    public JwtAuthenticationTokenFilter(UserAuthenticationService service, JwtTokenService jwtTokenService) {
+    public JwtAuthenticationTokenFilter(AuthenticationService service, JwtTokenService jwtTokenService) {
         this.service = service;
         this.jwtTokenService = jwtTokenService;
     }

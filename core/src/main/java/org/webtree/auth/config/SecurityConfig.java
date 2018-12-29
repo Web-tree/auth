@@ -1,6 +1,7 @@
 package org.webtree.auth.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -14,27 +15,33 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.webtree.auth.security.JwtAuthenticationEntryPoint;
 import org.webtree.auth.security.JwtAuthenticationTokenFilter;
+import org.webtree.auth.service.AuthenticationService;
 import org.webtree.auth.service.JwtTokenService;
-import org.webtree.auth.service.UserAuthenticationService;
 
 @ComponentScan("org.webtree.auth")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final UserAuthenticationService userService;
+    private final AuthenticationService userService;
     private final JwtTokenService tokenUtil;
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
-    private final AuthConfigurationProperties properties;
 
+    @Value("${auth.route.login}")
+    private String loginRoute;
+
+    @Value("${auth.route.register}")
+    private String registerRoute;
+
+    @Value("${auth.route.social-login}")
+    private String socialLoginRoute;
 
     @Autowired
-    public SecurityConfig(UserAuthenticationService userService,
+    public SecurityConfig(AuthenticationService userService,
                           JwtTokenService tokenUtil,
-                          JwtAuthenticationEntryPoint unauthorizedHandler, AuthConfigurationProperties properties) {
+                          JwtAuthenticationEntryPoint unauthorizedHandler) {
         this.userService = userService;
         this.tokenUtil = tokenUtil;
         this.unauthorizedHandler = unauthorizedHandler;
-        this.properties = properties;
     }
 
     @Autowired
@@ -72,11 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                .antMatchers(
-                        properties.getRoute().getLogin(),
-                        properties.getRoute().getRegister(),
-                        properties.getRoute().getSocialLogin()
-                ).permitAll()
+                .antMatchers(loginRoute,socialLoginRoute,registerRoute).permitAll()
                 .anyRequest().authenticated();
 
         // Custom JWT based security filter
