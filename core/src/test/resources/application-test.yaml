@@ -3,3 +3,6 @@ server:
  port: 9000
 auth:
   wt-user-impl: org.webtree.auth.domain.WtUserDetails
+  encoder:
+      salt: 9e0b5328c644e94c
+      password: passwordToChange

@@ -1,6 +1,5 @@
 package org.webtree.auth.service;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.webtree.auth.domain.AuthDetails;
@@ -9,24 +8,19 @@ import org.webtree.auth.domain.WtUserDetails;
 import org.webtree.auth.repository.AuthRepository;
 
 public class AuthenticationServiceImpl implements AuthenticationService {
-    private final JwtTokenService jwtTokenService;
+    private JwtTokenService jwtTokenService;
     private AuthRepository repository;
-    private ModelMapper modelMapper;
-    private Class<? extends WtUserDetails> entityClass;
+    private WtUserDetailsFactory factory;
 
-    public void setEntityClass(Class<? extends WtUserDetails> entityClass) {
-        this.entityClass = entityClass;
-    }
-
-    public AuthenticationServiceImpl(AuthRepository repository, JwtTokenService service, ModelMapper modelMapper) {
-        this.jwtTokenService = service;
+    public AuthenticationServiceImpl(JwtTokenService jwtTokenService, AuthRepository repository, WtUserDetailsFactory factory) {
+        this.jwtTokenService = jwtTokenService;
         this.repository = repository;
-        this.modelMapper = modelMapper;
+        this.factory = factory;
     }
 
     @Override
-    public WtUserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return repository.findByUsername(s).orElseThrow(() -> new UsernameNotFoundException(s));
+    public WtUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return repository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
     @Override
@@ -38,7 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public WtUserDetails register(AuthDetails authDetails) {
-        WtUserDetails userDetails = modelMapper.map(authDetails, entityClass);
+        WtUserDetails userDetails = factory.createUserOf(authDetails);
         return repository.saveIfNotExists(userDetails);
     }
 }

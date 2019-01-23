@@ -1,13 +1,11 @@
 package org.webtree.auth.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -30,25 +28,20 @@ class AuthenticationServiceTest {
     @Mock
     private AuthRepository repository;
     @Mock
-    private WtUserDetails details;
+    private WtUserDetails wtUserDetails;
     @Mock
     private JwtTokenService jwtTokenService;
     @Mock
     private AuthDetails authDetails;
     @Mock
-    private ModelMapper mapper;
+    private WtUserDetailsFactory factory;
     @InjectMocks
     private AuthenticationServiceImpl service;
 
-    @BeforeEach
-    void setUp() {
-        service.setEntityClass(WtUserDetails.class);
-    }
-
     @Test
     void shouldReturnUserByUsername() {
-        given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.of(details));
-        assertThat(service.loadUserByUsername(TEST_USERNAME)).isEqualTo(details);
+        given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.of(wtUserDetails));
+        assertThat(service.loadUserByUsername(TEST_USERNAME)).isEqualTo(wtUserDetails);
     }
 
     @Test
@@ -61,8 +54,8 @@ class AuthenticationServiceTest {
     @Test
     void shouldReturnTokenWhenLogin() {
         given(authDetails.getUsername()).willReturn(TEST_USERNAME);
-        given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.of(details));
-        given(jwtTokenService.generateToken(details)).willReturn(TOKEN);
+        given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.of(wtUserDetails));
+        given(jwtTokenService.generateToken(wtUserDetails)).willReturn(TOKEN);
         assertThat(service.login(authDetails).getToken()).isEqualTo(TOKEN);
     }
 
@@ -75,8 +68,8 @@ class AuthenticationServiceTest {
 
     @Test
     void shouldRegisterUser() {
-        given(mapper.map(authDetails, WtUserDetails.class)).willReturn(details);
-        given(repository.saveIfNotExists(details)).willReturn(details);
-        assertThat(service.register(authDetails)).isEqualTo(details);
+        given(factory.createUserOf(authDetails)).willReturn(wtUserDetails);
+        given(repository.saveIfNotExists(wtUserDetails)).willReturn(wtUserDetails);
+        assertThat(service.register(authDetails)).isEqualTo(wtUserDetails);
     }
 }

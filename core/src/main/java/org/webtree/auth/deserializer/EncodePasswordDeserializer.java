@@ -21,8 +21,12 @@ public class EncodePasswordDeserializer extends JsonDeserializer<String> {
     @Override
     public String deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         String original = jsonParser.getText();
-        if (original.length() != 128)
+       if (check(original))
             throw new IllegalArgumentException("Password's length should be a representation of sha512");
         return encoder.encode(original);
+    }
+
+    private boolean check(String psw){
+        return psw.length() != 128;
     }
 }

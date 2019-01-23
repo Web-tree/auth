@@ -10,7 +10,8 @@ import org.webtree.auth.repository.AuthRepository;
 import org.webtree.auth.service.AuthenticationService;
 import org.webtree.auth.service.AuthenticationServiceImpl;
 import org.webtree.auth.service.JwtTokenService;
-
+import org.webtree.auth.service.MappingWtUserDetailsFactory;
+import org.webtree.auth.service.WtUserDetailsFactory;
 
 @Configuration
 @ComponentScan("org.webtree.auth")
@@ -24,9 +25,13 @@ public class AuthConfiguration {
     }
 
     @Bean
-    public AuthenticationService getService(AuthRepository repository, ModelMapper mapper, JwtTokenService services) {
-        AuthenticationServiceImpl service = new AuthenticationServiceImpl(repository, services, mapper);
-        service.setEntityClass(entityClass);
-        return service;
+    public AuthenticationService getService(AuthRepository repository, JwtTokenService services) {
+        return new AuthenticationServiceImpl(services,repository,getFactory());
+    }
+
+    @Bean
+    public WtUserDetailsFactory getFactory(){
+        MappingWtUserDetailsFactory factory = new MappingWtUserDetailsFactory(new ModelMapper(),getEntityClass());
+        return factory;
     }
 }

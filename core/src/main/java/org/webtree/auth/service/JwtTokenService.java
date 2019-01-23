@@ -127,8 +127,8 @@ public class JwtTokenService {
         final Date created = getIssuedAtDateFromToken(token);
         //final Date expiration = getExpirationDateFromToken(token);
         return username.equals(user.getUsername()) &&
-                !isTokenExpired(token) &&
-                !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate());
+                !isTokenExpired(token);
+        // !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate());
     }
 
     private Date calculateExpirationDate(Date createdDate) {

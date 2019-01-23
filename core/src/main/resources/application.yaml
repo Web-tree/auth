@@ -4,9 +4,6 @@ auth:
     expiration: 604800
     header: Authorization
     secret: mySecret
-  encoder:
-    salt: 9e0b5328c644e94c
-    password: passwordToChange
   route:
      login: /rest/token/new
      social-login: /rest/social/login
