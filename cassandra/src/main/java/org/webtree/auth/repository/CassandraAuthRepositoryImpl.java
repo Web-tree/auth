@@ -13,12 +13,9 @@ public class CassandraAuthRepositoryImpl implements CassandraAuthRepository {
     private CassandraOperations operations;
     private Class<? extends WtUserDetails> aClass;
 
-    public void setEntityClass(Class<? extends WtUserDetails> aClass) {
-        this.aClass = aClass;
-    }
-
-    public CassandraAuthRepositoryImpl(CassandraOperations operations) {
+    public CassandraAuthRepositoryImpl(CassandraOperations operations, Class<? extends WtUserDetails> aClass) {
         this.operations = operations;
+        this.aClass = aClass;
     }
 
     @Override

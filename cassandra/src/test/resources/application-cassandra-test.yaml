@@ -10,3 +10,6 @@ spring:
       keyspace-name: trust_main
       port: 9142
       contact-points: localhost
+
+auth:
+  wt-user-impl: org.webtree.auth.domain.WTUserDetailsImpl
