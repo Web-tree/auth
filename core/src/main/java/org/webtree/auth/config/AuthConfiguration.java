@@ -26,12 +26,12 @@ public class AuthConfiguration {
 
     @Bean
     public AuthenticationService getService(AuthRepository repository, JwtTokenService services) {
-        return new AuthenticationServiceImpl(services,repository,getFactory());
+        return new AuthenticationServiceImpl(services, repository, getFactory());
     }
 
     @Bean
-    public WtUserDetailsFactory getFactory(){
-        MappingWtUserDetailsFactory factory = new MappingWtUserDetailsFactory(new ModelMapper(),getEntityClass());
+    public WtUserDetailsFactory getFactory() {
+        MappingWtUserDetailsFactory factory = new MappingWtUserDetailsFactory(new ModelMapper(), getEntityClass());
         return factory;
     }
 }

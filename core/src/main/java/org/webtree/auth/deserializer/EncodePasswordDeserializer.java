@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -21,12 +22,12 @@ public class EncodePasswordDeserializer extends JsonDeserializer<String> {
     @Override
     public String deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         String original = jsonParser.getText();
-       if (check(original))
+        if (check(original))
             throw new IllegalArgumentException("Password's length should be a representation of sha512");
         return encoder.encode(original);
     }
 
-    private boolean check(String psw){
-        return psw.length() != 128;
+    private boolean check(String password) {
+        return password.length() != 128;
     }
 }

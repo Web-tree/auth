@@ -28,7 +28,7 @@
     {
       "name": "auth.encoder.salt",
       "type": "java.lang.String",
-      "description": "Salt, length % 2 == 0 , only hex characters(a-f) and numbers."
+      "description": "Salt, length must be even number(length % 2 == 0) , only hex characters(a-f) and numbers."
     },
     {
       "name": "auth.jwt.secret",
@@ -42,7 +42,7 @@
     },
     {
       "name": "auth.jwt.expiration",
-      "type": "java.lang.String",
+      "type": "java.lang.Long",
       "description": "Token TTL before expire."
     },
     {

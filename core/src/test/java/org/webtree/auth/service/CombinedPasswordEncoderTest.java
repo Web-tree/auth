@@ -2,6 +2,7 @@ package org.webtree.auth.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.webtree.auth.security.CombinedPasswordEncoder;
 
@@ -13,7 +14,9 @@ class CombinedPasswordEncoderTest {
 
     @BeforeEach
     void setUp() {
-        encoder = new CombinedPasswordEncoder("longPassword", "9e0b5328c644e94a");
+        encoder = new CombinedPasswordEncoder(
+                "longPassword",
+                "9e0b5328c644e94a");
     }
 
     @Test

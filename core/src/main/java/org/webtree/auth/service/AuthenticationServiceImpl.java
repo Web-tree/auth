@@ -12,7 +12,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private AuthRepository repository;
     private WtUserDetailsFactory factory;
 
-    public AuthenticationServiceImpl(JwtTokenService jwtTokenService, AuthRepository repository, WtUserDetailsFactory factory) {
+    public AuthenticationServiceImpl(JwtTokenService jwtTokenService,
+                                     AuthRepository repository,
+                                     WtUserDetailsFactory factory) {
         this.jwtTokenService = jwtTokenService;
         this.repository = repository;
         this.factory = factory;
