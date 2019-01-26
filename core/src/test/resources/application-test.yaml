@@ -7,7 +7,15 @@ auth:
       password: passwordToChange
   jwt:
     secret: mySecret
+    expiration: 604800
+    header: Authorization
 
+  auth-details-impl: org.webtree.auth.domain.AuthDetailsImpl
+  route:
+     login: /rest/token/new
+     social-login: /rest/social/login
+     register: /rest/user/register
+  frontend-origin: "https://*.webtree.org"
 
 
 
