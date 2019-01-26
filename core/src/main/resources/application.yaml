@@ -3,7 +3,6 @@ auth:
   jwt:
     expiration: 604800
     header: Authorization
-    secret: mySecret
   route:
      login: /rest/token/new
      social-login: /rest/social/login
