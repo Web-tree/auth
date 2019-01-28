@@ -1,21 +1,13 @@
 server:
  port: 9000
 auth:
-  wt-user-impl: org.webtree.auth.domain.WtUserDetails
   encoder:
       salt: 9e0b5328c644e94c
       password: passwordToChange
   jwt:
     secret: mySecret
-    expiration: 604800
-    header: Authorization
+  user-details-class: org.webtree.auth.domain.WtUserDetails
 
-  auth-details-impl: org.webtree.auth.domain.AuthDetailsImpl
-  route:
-     login: /rest/token/new
-     social-login: /rest/social/login
-     register: /rest/user/register
-  frontend-origin: "https://*.webtree.org"
 
 
 

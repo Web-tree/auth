@@ -1,11 +1,10 @@
 package org.webtree.auth.config;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.webtree.auth.domain.WtUserDetails;
 import org.webtree.auth.repository.AuthRepository;
 import org.webtree.auth.service.AuthenticationService;
 import org.webtree.auth.service.AuthenticationServiceImpl;
@@ -17,11 +16,11 @@ import org.webtree.auth.service.WtUserDetailsFactory;
 @ComponentScan("org.webtree.auth")
 public class AuthConfiguration {
 
-    @Value("${auth.wt-user-impl}")
-    private Class<? extends WtUserDetails> entityClass;
+    @Autowired
+    private AuthConfigurationProperties properties;
 
-    protected Class<? extends WtUserDetails> getEntityClass() {
-        return entityClass;
+    protected AuthConfigurationProperties getProperties() {
+        return properties;
     }
 
     @Bean
@@ -31,7 +30,8 @@ public class AuthConfiguration {
 
     @Bean
     public WtUserDetailsFactory getFactory() {
-        MappingWtUserDetailsFactory factory = new MappingWtUserDetailsFactory(new ModelMapper(), getEntityClass());
+        MappingWtUserDetailsFactory factory =
+                new MappingWtUserDetailsFactory(new ModelMapper(), properties.getUserDetailsClass());
         return factory;
     }
 }
