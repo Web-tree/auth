@@ -9,11 +9,25 @@ import org.webtree.auth.domain.WtUserDetails;
 @Configuration("AuthPropertiesBean")
 @ConfigurationProperties(prefix = "auth")
 public class AuthConfigurationProperties {
+
     private final Route route = new Route();
     private final Jwt jwt = new Jwt();
     private final PasswordEncoder encoder = new PasswordEncoder();
+
+    /**
+     * Implementation of AuthDetails that is deserialized from request body from frontend.
+     */
     private Class<? extends AuthDetails> authDetailsClass = AuthDetailsImpl.class;
+
+    /**
+     * WTUserDetails implementation.
+     */
     private Class<? extends WtUserDetails> userDetailsClass;
+
+    /**
+     * Frontend origin for CORS policy.
+     */
+    private String frontendOrigin = "https://*.webtree.org";
 
     public Class<? extends WtUserDetails> getUserDetailsClass() {
         return userDetailsClass;
@@ -30,8 +44,6 @@ public class AuthConfigurationProperties {
     public void setAuthDetailsClass(Class<? extends AuthDetails> authDetailsClass) {
         this.authDetailsClass = authDetailsClass;
     }
-
-    private String frontendOrigin = "https://*.webtree.org";
 
     public String getFrontendOrigin() {
         return frontendOrigin;
@@ -53,9 +65,24 @@ public class AuthConfigurationProperties {
         return encoder;
     }
 
+    /**
+     * Endpoints for authentication.
+     */
     public static class Route {
+
+        /**
+         * Endpoint for register user.
+         */
         private String register = "/rest/user/register";
+
+        /**
+         * Endpoint for user login.
+         */
         private String login = "/rest/token/new";
+
+        /**
+         * Endpoint for login with social data.
+         */
         private String socialLogin = "/rest/social/login";
 
         public String getRegister() {
@@ -83,9 +110,24 @@ public class AuthConfigurationProperties {
         }
     }
 
+    /**
+     * Json web token configuration.
+     */
     public static class Jwt {
+
+        /**
+         * Header that must be in a request, where token is.
+         */
         private String header = "Authorization";
+
+        /**
+         * Signing key for jwt token.
+         */
         private String secret;
+
+        /**
+         * Token TTL before expire.
+         */
         private Long expiration = 604800L;
 
         public String getHeader() {
@@ -113,8 +155,19 @@ public class AuthConfigurationProperties {
         }
     }
 
+    /**
+     * Password encoder configuration.
+     */
     public static class PasswordEncoder {
+
+        /**
+         * Salt, only even length , only hex characters(a-f) and numbers.
+         */
         private String salt;
+
+        /**
+         * Password for password encoder, any value is suitable.
+         */
         private String password;
 
         public String getSalt() {
