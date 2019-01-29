@@ -1,0 +1,13 @@
+server:
+ port: 9000
+auth:
+  encoder:
+      salt: 9e0b5328c644e94c
+      password: passwordToChange
+  jwt:
+    secret: mySecret
+  user-details-class: org.webtree.auth.domain.WtUserDetails
+
+
+
+
