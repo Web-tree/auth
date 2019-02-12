@@ -1,3 +1,7 @@
+library identifier: 'webtree-lib@master', retriever: modernSCM(
+        [$class: 'GitSCMSource',
+         remote: 'https://github.com/Web-tree/jenkins.git'])
+
 pipeline {
     agent {
         docker {
@@ -16,15 +20,7 @@ pipeline {
         }
         stage('Publish in artifactory') {
             steps {
-                script {
-                    def version = sh(
-                            script: 'mvn -q -Dexec.executable=echo -Dexec.args=\'${project.version}\' --non-recursive exec:exec',
-                            returnStdout: true
-                    ).trim()
-                    withCredentials([usernamePassword(credentialsId: 'artifactory-passwd', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        sh "curl -u ${USERNAME}:${PASSWORD} -X put https://artifactory.webtree.org/artifactory/list/dev/org/webtree/auth-core/${version}/ -T core/target/core-${version}.jar"
-                    }
-                }
+                publishInArtifactory('artifactory-passwd', 'org/webtree/auth-core', 'core/target/core')
             }
         }
     }
