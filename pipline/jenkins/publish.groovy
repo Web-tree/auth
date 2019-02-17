@@ -20,7 +20,7 @@ pipeline {
         }
         stage('Publish in artifactory') {
             steps {
-                publishInArtifactory('artifactory-passwd', 'org/webtree/auth-core', 'core/target/core')
+                publishInArtifactory('artifactory-passwd', 'org/webtree/auth-core', 'core/target/auth-core')
             }
         }
     }
