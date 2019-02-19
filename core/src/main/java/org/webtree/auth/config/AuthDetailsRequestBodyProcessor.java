@@ -21,9 +21,8 @@ public class AuthDetailsRequestBodyProcessor extends RequestResponseBodyMethodPr
         super(converters);
     }
 
-    @Value("${auth.auth-details-impl}")
+    @Value("#{AuthPropertiesBean.authDetailsClass}")
     private Class<? extends AuthDetails> detailsImplClass;
-
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {

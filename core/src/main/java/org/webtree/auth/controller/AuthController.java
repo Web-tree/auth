@@ -14,7 +14,7 @@ import org.webtree.auth.service.AuthenticationService;
 
 @RestController
 @RequestMapping
-@CrossOrigin(value = "${auth.frontend-origin}")
+@CrossOrigin(value = "#{AuthPropertiesBean.frontendOrigin}")
 public class AuthController {
 
     private AuthenticationService service;
@@ -24,13 +24,13 @@ public class AuthController {
         this.service = service;
     }
 
-    @PostMapping("${auth.route.register}")
+    @PostMapping("#{AuthPropertiesBean.route.register}")
     @ResponseStatus(HttpStatus.CREATED)
     public WtUserDetails register(AuthDetails authDetails) {
         return service.register(authDetails);
     }
 
-    @PostMapping("${auth.route.login}")
+    @PostMapping("#{AuthPropertiesBean.route.login}")
     public Token login(AuthDetails authDetails) {
         return service.login(authDetails);
     }

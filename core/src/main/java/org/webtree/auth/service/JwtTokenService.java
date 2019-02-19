@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.webtree.auth.config.AuthConfigurationProperties;
 import org.webtree.auth.domain.WtUserDetails;
 import org.webtree.auth.time.TimeProvider;
 
@@ -23,10 +24,10 @@ public class JwtTokenService {
     static final String CLAIM_KEY_CREATED = "iat";
     //todo extract
 
-    @Value("${auth.jwt.secret}")
+    @Value("#{AuthPropertiesBean.jwt.secret}")
     private String secret;
 
-    @Value("${auth.jwt.expiration}")
+    @Value("#{AuthPropertiesBean.jwt.expiration}")
     private Long expiration;
 
     private TimeProvider timeProvider;
@@ -127,8 +128,8 @@ public class JwtTokenService {
         final Date created = getIssuedAtDateFromToken(token);
         //final Date expiration = getExpirationDateFromToken(token);
         return username.equals(user.getUsername()) &&
-                !isTokenExpired(token) &&
-                !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate());
+                !isTokenExpired(token);
+        // !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate());
     }
 
     private Date calculateExpirationDate(Date createdDate) {

@@ -37,11 +37,6 @@ public class WTUserDetailsImpl implements WtUserDetails<String> {
     }
 
     @Override
-    public Date getLastPasswordResetDate() {
-        return null;
-    }
-
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
     }

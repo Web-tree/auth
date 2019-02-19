@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration;
  */
 
 @Configuration
-@ComponentScan
+@ComponentScan("org.webtree.auth")
 @SpringBootApplication
 public class SpringTestConfig { }

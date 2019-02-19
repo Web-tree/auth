@@ -9,14 +9,12 @@ import org.webtree.auth.repository.CassandraAuthRepositoryImpl;
 
 @Configuration
 @EnableCassandraRepositories("org.webtree.auth.repository")
-public class CassandraDriverConfiguration extends AuthConfiguration {
+public class CassandraAuthConfiguration  {
 
     @Bean
-    public CassandraAuthRepository getRepository(CassandraOperations operations) {
-        CassandraAuthRepositoryImpl wtUserRepository = new CassandraAuthRepositoryImpl(operations, getEntityClass());
-        return wtUserRepository;
+    public CassandraAuthRepository getRepository(CassandraOperations operations,
+                                                 AuthConfigurationProperties properties) {
+        return new CassandraAuthRepositoryImpl(operations,
+              properties.getUserDetailsClass());
     }
-
-
-    //TODO check index on username
 }

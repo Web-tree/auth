@@ -6,6 +6,4 @@ import java.util.Date;
 
 public interface WtUserDetails<ID> extends UserDetails {
     ID getId();
-
-    Date getLastPasswordResetDate();
 }

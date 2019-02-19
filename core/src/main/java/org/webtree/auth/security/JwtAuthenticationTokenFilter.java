@@ -27,7 +27,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private final AuthenticationService service;
     private final JwtTokenService jwtTokenService;
 
-    @Value("${auth.jwt.header}")
+    @Value("#{AuthPropertiesBean.jwt.header}")
     private String tokenHeader;
 
     @Autowired
