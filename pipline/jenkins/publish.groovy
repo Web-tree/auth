@@ -4,9 +4,14 @@ library identifier: 'webtree-lib@master', retriever: modernSCM(
 
 pipeline {
     agent {
-        docker {
-            image 'maven:3-jdk-8-alpine'
-            args '-v jenkins_m2:/root/.m2'
+        kubernetes {
+            label 'auth-validate-maven'
+            containerTemplate {
+                name 'maven'
+                image 'maven:3.3.9-jdk-8-alpine'
+                ttyEnabled true
+                command 'cat'
+            }
         }
     }
 
