@@ -1,0 +1,8 @@
+matrix:
+  include:
+    - language: java
+      jdk: oraclejdk8
+      before_script:
+        - cd auth-core
+      script:
+        - mvn -B verify
