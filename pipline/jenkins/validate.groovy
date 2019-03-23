@@ -1,20 +1,22 @@
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+            label 'auth-validate-maven'
+            containerTemplate {
+                name 'maven'
+                image 'maven:3.3.9-jdk-8-alpine'
+                ttyEnabled true
+                command 'cat'
+            }
+        }
+    }
 
     stages {
         stage('Validate core') {
-            agent {
-                docker {
-                    image 'maven:3'
-                    //noinspection GroovyAssignabilityCheck
-                    args '-v jenkins_m2:/root/.m2'
-                    reuseNode true
-                }
-            }
             stages {
                 stage('Checkout') {
                     steps {
-                        git branch: "${env.BRANCH_NAME ?: 'master'}", credentialsId: 'github-app', url: 'https://github.com/Web-tree/auth.git'
+                        git branch: "${env.BRANCH_NAME ?: 'master'}", credentialsId: 'github-repo-token', url: 'https://github.com/Web-tree/auth.git'
                     }
                 }
                 stage('Build') {
@@ -28,6 +30,14 @@ pipeline {
                     }
                 }
             }
+        }
+    }
+    post {
+        success {
+            slackSend(color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+        }
+        failure {
+            slackSend(color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         }
     }
 }
