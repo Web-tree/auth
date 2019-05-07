@@ -1,8 +1,0 @@
-matrix:
-  include:
-    - language: java
-      jdk: oraclejdk11
-      before_script:
-        - cd back
-      script:
-        - mvn -Dmaven.test.failure.ignore=true -B verify
