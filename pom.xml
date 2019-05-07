@@ -30,7 +30,7 @@
     <repositories>
         <repository>
             <id>Web-tree</id>
-            <url>https://artifactory.webtree.org/artifactory/dev</url>
+            <url>https://artifactory.dev.webtree.org/artifactory/dev</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
