@@ -16,7 +16,7 @@ import java.io.IOException;
 @Profile("dev")
 @Configuration
 public class EmbeddedCassandraConfig extends CassandraAuthConfiguration {
-    private static final String MESSAGE = "Cant start embedded cassandra server";
+    private static final String MESSAGE = "Can't start embedded cassandra server";
 
     @Override
     @Bean

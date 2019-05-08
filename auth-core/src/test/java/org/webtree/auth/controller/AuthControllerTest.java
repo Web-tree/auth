@@ -46,10 +46,10 @@ public class AuthControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void shouldReturn2XxOkIfUserDoesNotExist() throws Exception {
+    void shouldReturnOkIfUserDoesNotExist() throws Exception {
         when(service.registerIfNotExists(any(AuthDetails.class))).thenReturn(true);
         mockMvc
-                .perform(post("/rest/user/registerIfNotExists")
+                .perform(post("/rest/user/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authDetails)))
                 .andExpect(status().isCreated());
@@ -57,11 +57,11 @@ public class AuthControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void shouldReturn4XxBadErquestIfUserExist() throws Exception {
+    void shouldReturnBadRequestIfUserExist() throws Exception {
         when(service.registerIfNotExists(any(AuthDetails.class))).thenReturn(false);
 
         mockMvc
-                .perform(post("/rest/user/registerIfNotExists")
+                .perform(post("/rest/user/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authDetails)))
                 .andExpect(status().isBadRequest());
