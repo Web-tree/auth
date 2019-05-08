@@ -14,6 +14,6 @@ public class EmbeddedCassandraExtension implements BeforeAllCallback, AfterTestE
 
     @Override
     public void afterTestExecution(ExtensionContext extensionContext) {
-        EmbeddedCassandraServerHelper.cleanDataEmbeddedCassandra("trust_main");
+        EmbeddedCassandraServerHelper.cleanDataEmbeddedCassandra("auth_main");
     }
 }

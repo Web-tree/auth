@@ -7,9 +7,11 @@ logging:
 spring:
   data:
     cassandra:
-      keyspace-name: trust_main
+      keyspace-name: auth_main
       port: 9142
       contact-points: localhost
-
+      
 auth:
-  wt-user-impl: org.webtree.auth.domain.WTUserDetailsImpl
+  encoder:
+    password: 12456
+    salt: acacac

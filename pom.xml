@@ -11,13 +11,12 @@
 
     <modules>
         <module>core</module>
-        <module>cassandra</module>
     </modules>
 
     <properties>
         <spring-boot.version>2.0.5.RELEASE</spring-boot.version>
         <spring-core.version>5.1.0.RELEASE</spring-core.version>
-        <spring-data-cassandra>2.0.6.RELEASE</spring-data-cassandra>
+        <spring-data-cassandra>2.1.6.RELEASE</spring-data-cassandra>
         <jjwt.version>0.7.0</jjwt.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
@@ -31,13 +30,7 @@
     </properties>
 
     <repositories>
-        <repository>
-            <id>Web-tree</id>
-            <url>https://artifactory.webtree.org/artifactory/dev</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
+
         <repository>
             <id>spring-libs-release</id>
             <name>Spring Releases</name>
@@ -79,7 +72,7 @@
                         <id>validate</id>
                         <phase>validate</phase>
                         <configuration>
-                            <configLocation>checkstyle.xml</configLocation>
+                            <configLocation>core/checkstyle.xml</configLocation>
                             <encoding>UTF-8</encoding>
                             <consoleOutput>true</consoleOutput>
                             <failsOnError>true</failsOnError>

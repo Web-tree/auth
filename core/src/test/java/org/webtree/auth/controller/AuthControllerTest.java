@@ -12,8 +12,10 @@ import org.webtree.auth.domain.Token;
 import org.webtree.auth.security.CombinedPasswordEncoder;
 import org.webtree.auth.service.AuthenticationService;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,12 +47,25 @@ public class AuthControllerTest extends AbstractControllerTest {
 
     @Test
     void shouldReturn2XxOkIfUserDoesNotExist() throws Exception {
+        when(service.registerIfNotExists(any(AuthDetails.class))).thenReturn(true);
         mockMvc
-                .perform(post("/rest/user/register")
+                .perform(post("/rest/user/registerIfNotExists")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authDetails)))
                 .andExpect(status().isCreated());
-        verify(service).register(authDetailsWithEncodedPassword);
+        verify(service).registerIfNotExists(authDetailsWithEncodedPassword);
+    }
+
+    @Test
+    void shouldReturn4XxBadErquestIfUserExist() throws Exception {
+        when(service.registerIfNotExists(any(AuthDetails.class))).thenReturn(false);
+
+        mockMvc
+                .perform(post("/rest/user/registerIfNotExists")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(authDetails)))
+                .andExpect(status().isBadRequest());
+        verify(service).registerIfNotExists(authDetailsWithEncodedPassword);
     }
 
     @Test

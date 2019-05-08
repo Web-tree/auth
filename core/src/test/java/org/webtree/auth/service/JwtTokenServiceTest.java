@@ -8,7 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.webtree.auth.domain.WtUserDetails;
+import org.webtree.auth.domain.User;
 import org.webtree.auth.time.TimeProvider;
 
 import java.util.Date;
@@ -30,7 +30,7 @@ public class JwtTokenServiceTest {
     @Mock
     private TimeProvider timeProviderMock;
     @Mock
-    private WtUserDetails<String> details;
+    private User details;
     @InjectMocks
     private JwtTokenService jwtTokenService;
 
@@ -126,7 +126,7 @@ public class JwtTokenServiceTest {
     void canValidateToken() {
         when(timeProviderMock.now())
                 .thenReturn(DateUtil.now());
-        WtUserDetails details = mock(WtUserDetails.class);
+        User  details = mock(User.class);
         when(details.getUsername()).thenReturn(TEST_USERNAME);
 
         String token = createToken();
