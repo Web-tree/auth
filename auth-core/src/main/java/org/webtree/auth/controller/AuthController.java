@@ -27,8 +27,8 @@ public class AuthController {
     @PostMapping("#{AuthPropertiesBean.route.register}")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> register(AuthDetails authDetails) {
-        return service.registerIfNotExists(authDetails)
-                ? ResponseEntity.status(HttpStatus.CREATED).build() : ResponseEntity.badRequest().build();
+        return service.registerIfNotExists(authDetails) ?
+                ResponseEntity.status(HttpStatus.CREATED).build() : ResponseEntity.badRequest().build();
     }
 
     @PostMapping("#{AuthPropertiesBean.route.login}")

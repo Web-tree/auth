@@ -1,5 +1,8 @@
 package org.webtree.auth.repository;
 
+import static org.springframework.data.cassandra.core.query.Criteria.where;
+import static org.springframework.data.cassandra.core.query.Query.query;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.data.cassandra.core.InsertOptions;
@@ -8,8 +11,6 @@ import org.webtree.auth.domain.UserLock;
 
 import java.util.Optional;
 
-import static org.springframework.data.cassandra.core.query.Criteria.where;
-import static org.springframework.data.cassandra.core.query.Query.query;
 
 /**
  * Created by Udjin Skobelev on 16.08.2018.

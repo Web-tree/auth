@@ -12,7 +12,7 @@ public class MappingUserDetailsFactory extends UserDetailsFactory {
     private ModelMapper mapper;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         mapper = new ModelMapper();
     }
 
