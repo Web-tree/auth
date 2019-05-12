@@ -5,8 +5,6 @@ auth:
     password: 12456
     salt: acacac
 
-
-
 spring:
   data:
     cassandra:

@@ -9,22 +9,3 @@ spring:
       keyspace-name: auth_main
       port: 9142
       contact-points: localhost
-  social:
-    facebook:
-      app-id: 1580148318762130
-      app-secret: 5b725168222acd2983a8822df4b84c75
-  security:
-    encoder:
-      password: passwordToChange
-      salt: 9e0b5328c644e94c
-
-jwt:
-  header: Authorization
-  secret: mySecret
-  expiration: 604800
-  route:
-    authentication:
-      path: token/new
-      refresh: refresh
-frontend:
-  origins: https://*.webtree.org
