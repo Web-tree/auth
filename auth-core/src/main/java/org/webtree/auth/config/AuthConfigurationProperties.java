@@ -60,7 +60,7 @@ public class AuthConfigurationProperties {
         /**
          * Endpoint for registerIfNotExists user.
          */
-        private String register = "/rest/user/registerIfNotExists";
+        private String register = "/rest/user/register";
 
         /**
          * Endpoint for user login.

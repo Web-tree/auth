@@ -13,7 +13,7 @@ import java.io.IOException;
  * Created by Udjin Skobelev on 03.12.2018.
  */
 
-@Profile("dev")
+@Profile({"dev", "cassandra-test"})
 @Configuration
 public class EmbeddedCassandraConfig extends CassandraAuthConfiguration {
     private static final String MESSAGE = "Can't start embedded cassandra server";
