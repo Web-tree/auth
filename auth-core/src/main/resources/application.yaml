@@ -9,3 +9,7 @@ spring:
       keyspace-name: auth_main
       port: 9142
       contact-points: localhost
+auth:
+  encoder:
+    password: 54679459
+    salt: abccab
