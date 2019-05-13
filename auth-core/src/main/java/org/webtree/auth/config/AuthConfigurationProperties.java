@@ -58,7 +58,7 @@ public class AuthConfigurationProperties {
     public static class Route {
 
         /**
-         * Endpoint for registerIfNotExists user.
+         * Endpoint for register user.
          */
         private String register = "/rest/user/register";
 
