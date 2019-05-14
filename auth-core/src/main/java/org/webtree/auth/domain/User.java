@@ -69,7 +69,7 @@ public class User implements UserDetails {
         return this.id;
     }
 
-    public @Indexed String getUsername() {
+    public String getUsername() {
         return this.username;
     }
 
