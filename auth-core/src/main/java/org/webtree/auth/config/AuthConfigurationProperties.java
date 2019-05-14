@@ -4,7 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.webtree.auth.domain.AuthDetails;
 import org.webtree.auth.domain.AuthDetailsImpl;
-import org.webtree.auth.domain.WtUserDetails;
 
 @Configuration("AuthPropertiesBean")
 @ConfigurationProperties(prefix = "auth")
@@ -19,23 +18,11 @@ public class AuthConfigurationProperties {
      */
     private Class<? extends AuthDetails> authDetailsClass = AuthDetailsImpl.class;
 
-    /**
-     * WTUserDetails implementation.
-     */
-    private Class<? extends WtUserDetails> userDetailsClass;
 
     /**
      * Frontend origin for CORS policy.
      */
     private String frontendOrigin = "https://*.webtree.org";
-
-    public Class<? extends WtUserDetails> getUserDetailsClass() {
-        return userDetailsClass;
-    }
-
-    public void setUserDetailsClass(Class<? extends WtUserDetails> userDetailsClass) {
-        this.userDetailsClass = userDetailsClass;
-    }
 
     public Class<? extends AuthDetails> getAuthDetailsClass() {
         return authDetailsClass;

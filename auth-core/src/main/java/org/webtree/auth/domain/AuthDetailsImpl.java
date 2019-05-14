@@ -5,7 +5,6 @@ import org.webtree.auth.deserializer.EncodePasswordDeserializer;
 
 import java.io.Serializable;
 import java.util.Objects;
-import javax.validation.constraints.Size;
 
 public class AuthDetailsImpl implements Serializable, AuthDetails {
     private static final long serialVersionUID = 6425650941625914226L;

@@ -6,13 +6,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.webtree.auth.config.AuthConfigurationProperties;
-import org.webtree.auth.domain.WtUserDetails;
+import org.webtree.auth.domain.User;
 import org.webtree.auth.time.TimeProvider;
 
-
 import java.util.Date;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -83,9 +80,9 @@ public class JwtTokenService {
         return (lastPasswordReset != null && created.before(lastPasswordReset));
     }
 
-    public String generateToken(WtUserDetails details) {
+    public String generateToken(User details) {
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, details.getUsername(), details.getId().toString());
+        return doGenerateToken(claims, details.getUsername(), details.getId());
     }
 
     private String doGenerateToken(Map<String, Object> claims, String subject, String id) {
@@ -123,7 +120,7 @@ public class JwtTokenService {
                 .compact();
     }
 
-    public Boolean validateToken(String token, WtUserDetails user) {
+    public Boolean validateToken(String token, User user) {
         final String username = getUsernameFromToken(token);
         final Date created = getIssuedAtDateFromToken(token);
         //final Date expiration = getExpirationDateFromToken(token);

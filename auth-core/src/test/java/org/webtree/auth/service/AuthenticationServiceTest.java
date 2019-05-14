@@ -1,24 +1,30 @@
 package org.webtree.auth.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
 import org.webtree.auth.domain.AuthDetails;
-import org.webtree.auth.domain.WtUserDetails;
+import org.webtree.auth.domain.AuthDetailsImpl;
+import org.webtree.auth.domain.User;
+import org.webtree.auth.domain.UserLock;
 import org.webtree.auth.repository.AuthRepository;
+import org.webtree.auth.repository.UserLockRepository;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationServiceTest {
@@ -27,21 +33,33 @@ class AuthenticationServiceTest {
 
     @Mock
     private AuthRepository repository;
+
     @Mock
-    private WtUserDetails wtUserDetails;
+    private UserLockRepository lockRepository;
+
+    private User user;
+
     @Mock
     private JwtTokenService jwtTokenService;
-    @Mock
+
     private AuthDetails authDetails;
+
     @Mock
-    private WtUserDetailsFactory factory;
+    private UserDetailsFactory factory;
+
     @InjectMocks
     private AuthenticationServiceImpl service;
 
+    @BeforeEach
+    void setUp() {
+        authDetails = new AuthDetailsImpl("name", "pass");
+        user = new User("", "u", "p", null);
+    }
+
     @Test
     void shouldReturnUserByUsername() {
-        given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.of(wtUserDetails));
-        assertThat(service.loadUserByUsername(TEST_USERNAME)).isEqualTo(wtUserDetails);
+        given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.of(user));
+        assertThat(service.loadUserByUsername(TEST_USERNAME)).isEqualTo(user);
     }
 
     @Test
@@ -53,23 +71,40 @@ class AuthenticationServiceTest {
 
     @Test
     void shouldReturnTokenWhenLogin() {
-        given(authDetails.getUsername()).willReturn(TEST_USERNAME);
-        given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.of(wtUserDetails));
-        given(jwtTokenService.generateToken(wtUserDetails)).willReturn(TOKEN);
+        given(repository.findByUsername(anyString())).willReturn(Optional.of(user));
+        given(jwtTokenService.generateToken(user)).willReturn(TOKEN);
         assertThat(service.login(authDetails).getToken()).isEqualTo(TOKEN);
     }
 
     @Test
     void shouldThrowExceptionWhenUsernameWasNotFoundWhenLogin() {
-        given(authDetails.getUsername()).willReturn(TEST_USERNAME);
-        given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.ofNullable(null));
+        given(repository.findByUsername(anyString())).willReturn(Optional.ofNullable(null));
         assertThatThrownBy(() -> service.login(authDetails)).isInstanceOf(BadCredentialsException.class);
     }
 
     @Test
-    void shouldRegisterUser() {
-        given(factory.createUserOf(authDetails)).willReturn(wtUserDetails);
-        given(repository.saveIfNotExists(wtUserDetails)).willReturn(wtUserDetails);
-        assertThat(service.register(authDetails)).isEqualTo(wtUserDetails);
+    public void shouldReturnFalseIfUserDoNotExistButCantMakeLock() {
+        given(factory.createUserOf(authDetails)).willReturn(user);
+        given(repository.findByUsername(anyString())).willReturn(Optional.empty());
+        given(lockRepository.saveIfNotExist(any(UserLock.class))).willReturn(false);
+        assertThat(service.registerIfNotExists(authDetails)).isFalse();
+        verify(repository, never()).saveIfNotExists(any(User.class));
+    }
+
+    @Test
+    public void shouldReturnFalseIfUserExists() {
+        given(factory.createUserOf(authDetails)).willReturn(user);
+        given(repository.findByUsername(anyString())).willReturn(Optional.of(user));
+        assertThat(service.registerIfNotExists(authDetails)).isFalse();
+        verifyNoMoreInteractions(lockRepository);
+        verify(repository, never()).saveIfNotExists(any(User.class));
+    }
+
+    @Test
+    public void shouldReturnTrueIfUserDoesNotExists() {
+        given(factory.createUserOf(authDetails)).willReturn(user);
+        given(repository.findByUsername(anyString())).willReturn(Optional.empty());
+        given(lockRepository.saveIfNotExist(any(UserLock.class))).willReturn(true);
+        assertThat(service.registerIfNotExists(authDetails)).isTrue();
     }
 }

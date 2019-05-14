@@ -1,5 +1,6 @@
 package org.webtree.auth.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.encrypt.Encryptors;
@@ -18,6 +19,7 @@ public class CombinedPasswordEncoder implements PasswordEncoder {
     private PasswordEncoder encoder;
     private TextEncryptor encryptor;
 
+    @Autowired
     public CombinedPasswordEncoder(@Value("#{AuthPropertiesBean.encoder.password}") String password,
                                    @Value("#{AuthPropertiesBean.encoder.salt}") String salt) {
         encoder = new BCryptPasswordEncoder();
