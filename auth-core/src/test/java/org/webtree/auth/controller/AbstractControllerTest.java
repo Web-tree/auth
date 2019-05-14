@@ -23,7 +23,6 @@ public abstract class AbstractControllerTest extends AbstractSpringTest {
     @Autowired
     protected MockMvc mockMvc;
 
-    @Autowired
     protected ObjectMapper objectMapper;
 
     @MockBean
