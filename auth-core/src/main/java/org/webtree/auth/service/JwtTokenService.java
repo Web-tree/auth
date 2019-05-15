@@ -1,12 +1,14 @@
 package org.webtree.auth.service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.webtree.auth.domain.User;
+import org.webtree.auth.exception.AuthenticationException;
 import org.webtree.auth.time.TimeProvider;
 
 import java.util.Date;
@@ -35,7 +37,11 @@ public class JwtTokenService {
     }
 
     public String getUsernameFromToken(String token) {
-        return getClaimFromToken(token, Claims::getSubject);
+        try {
+            return getClaimFromToken(token, Claims::getSubject);
+        } catch (JwtException e) {
+            throw new AuthenticationException("Can't parse token", e);
+        }
     }
 
 

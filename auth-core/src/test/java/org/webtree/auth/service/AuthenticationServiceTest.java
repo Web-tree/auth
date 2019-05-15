@@ -107,4 +107,33 @@ class AuthenticationServiceTest {
         given(lockRepository.saveIfNotExist(any(UserLock.class))).willReturn(true);
         assertThat(service.registerIfNotExists(authDetails)).isTrue();
     }
+
+    @Test
+    void shouldReturnTrueIfTokenISCorrect(){
+        String someToken = "someToken";
+        given(jwtTokenService.getUsernameFromToken(someToken)).willReturn(user.getUsername());
+        given(repository.findByUsername(anyString())).willReturn(Optional.of(user));
+        given(jwtTokenService.validateToken(someToken,user)).willReturn(true);
+
+        assertThat(service.checkToken(someToken)).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfTokenIsNotCorrect(){
+        String someToken = "someToken";
+        given(jwtTokenService.getUsernameFromToken(someToken)).willReturn(user.getUsername());
+        given(repository.findByUsername(anyString())).willReturn(Optional.of(user));
+        given(jwtTokenService.validateToken(someToken,user)).willReturn(true);
+
+        assertThat(service.checkToken(someToken)).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfCantFindUserByNameFromToken() {
+        String someToken = "someToken";
+        given(jwtTokenService.getUsernameFromToken(someToken)).willReturn(user.getUsername());
+        given(repository.findByUsername(anyString())).willReturn(Optional.empty());
+
+        assertThat(service.checkToken(someToken)).isFalse();
+    }
 }
