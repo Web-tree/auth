@@ -34,7 +34,7 @@ public class AuthController {
     @GetMapping("#{AuthPropertiesBean.route.checkToken}")
     public ResponseEntity<?> checkToken(@RequestBody String token) {
         return service.checkToken(token) ?
-                ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+                ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus. UNAUTHORIZED).build();
 
     }
 }

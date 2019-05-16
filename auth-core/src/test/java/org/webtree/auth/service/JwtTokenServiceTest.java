@@ -7,8 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.webtree.auth.domain.User;
+import org.webtree.auth.exception.AuthenticationException;
 import org.webtree.auth.time.TimeProvider;
 
 import java.util.Date;
@@ -26,11 +28,13 @@ import static org.mockito.Mockito.when;
 public class JwtTokenServiceTest {
     private static final String TEST_USERNAME = "testUser";
     private static final String USER_ID = "someUserId";
+    private static final String PASSWORD = "someUserPassword";
 
     @Mock
     private TimeProvider timeProviderMock;
-    @Mock
+
     private User details;
+
     @InjectMocks
     private JwtTokenService jwtTokenService;
 
@@ -38,9 +42,7 @@ public class JwtTokenServiceTest {
     void setUp() {
         jwtTokenService.setExpiration(3600L);
         jwtTokenService.setSecret("mySecret");
-        given(details.getId()).willReturn(USER_ID);
-        given(details.getUsername()).willReturn(TEST_USERNAME);
-
+        details = new User(USER_ID, TEST_USERNAME, PASSWORD, new Date());
     }
 
     @Test
@@ -62,6 +64,13 @@ public class JwtTokenServiceTest {
         final String token = createToken();
 
         assertThat(jwtTokenService.getUsernameFromToken(token)).isEqualTo(TEST_USERNAME);
+    }
+
+    @Test()
+    void shouldThrowExceptionIfTokenCantBeProcessed() {
+        final String token = "123";
+        assertThatThrownBy(() -> jwtTokenService.getUsernameFromToken(token))
+                .isExactlyInstanceOf(AuthenticationException.class);
     }
 
 
@@ -126,7 +135,7 @@ public class JwtTokenServiceTest {
     void canValidateToken() {
         when(timeProviderMock.now())
                 .thenReturn(DateUtil.now());
-        User  details = mock(User.class);
+        User details = mock(User.class);
         when(details.getUsername()).thenReturn(TEST_USERNAME);
 
         String token = createToken();

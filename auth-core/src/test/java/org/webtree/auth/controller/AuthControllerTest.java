@@ -1,6 +1,7 @@
 package org.webtree.auth.controller;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -46,72 +47,85 @@ public class AuthControllerTest extends AbstractControllerTest {
         token = () -> TOKEN;
     }
 
-    @Test
-    void shouldReturnOkIfUserDoesNotExist() throws Exception {
-        when(service.registerIfNotExists(any(AuthDetails.class))).thenReturn(true);
-        mockMvc
-                .perform(post("/rest/user/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(authDetails)))
-                .andExpect(status().isCreated());
-        verify(service).registerIfNotExists(authDetailsWithEncodedPassword);
+    @Nested
+    class RegisterEndpointTest {
+
+        @Test
+        void shouldReturnOkIfUserDoesNotExist() throws Exception {
+            when(service.registerIfNotExists(any(AuthDetails.class))).thenReturn(true);
+            mockMvc
+                    .perform(post("/rest/user/register")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(authDetails)))
+                    .andExpect(status().isCreated());
+            verify(service).registerIfNotExists(authDetailsWithEncodedPassword);
+        }
+
+        @Test
+        void shouldReturnBadRequestIfUserExist() throws Exception {
+            when(service.registerIfNotExists(any(AuthDetails.class))).thenReturn(false);
+
+            mockMvc
+                    .perform(post("/rest/user/register")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(authDetails)))
+                    .andExpect(status().isBadRequest());
+            verify(service).registerIfNotExists(authDetailsWithEncodedPassword);
+        }
+
     }
 
-    @Test
-    void shouldReturnBadRequestIfUserExist() throws Exception {
-        when(service.registerIfNotExists(any(AuthDetails.class))).thenReturn(false);
+    @Nested
+    class LoginEndpointTest {
 
-        mockMvc
-                .perform(post("/rest/user/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(authDetails)))
-                .andExpect(status().isBadRequest());
-        verify(service).registerIfNotExists(authDetailsWithEncodedPassword);
+        @Test
+        void whenLoginWithExistedUser_shouldReturnToken() throws Exception {
+            given(service.login(authDetailsWithEncodedPassword)).willReturn(token);
+            mockMvc.perform(
+                    post("/rest/token/new")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(authDetails))
+            )
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.token").value(TOKEN))
+                    .andReturn();
+        }
     }
 
-    @Test
-    void whenLoginWithExistedUser_shouldReturnToken() throws Exception {
-        given(service.login(authDetailsWithEncodedPassword)).willReturn(token);
-        mockMvc.perform(
-                post("/rest/token/new")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(authDetails))
-        )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value(TOKEN))
-                .andReturn();
+    @Nested
+    class CheckTokenEndpointTest{
+        @Test
+        void shouldReturnOkWhenTokenIsCorrect() throws Exception {
+            String someToken = "someToken";
+            when(service.checkToken(someToken)).thenReturn(true);
+
+            mockMvc.perform(
+                    get("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(someToken)
+            ).andExpect(status().isOk());
+        }
+
+        @Test
+        void shouldReturnBadRequestIFTokenISNotCorrect() throws Exception {
+            String someToken = "someToken";
+            when(service.checkToken(someToken)).thenReturn(false);
+
+            mockMvc.perform(
+                    get("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(someToken)
+            ).andExpect(status().is(401));
+        }
+
+        //simple controller advice test
+        @Test
+        void shouldReturnBadRequestIfExceptionOccur() throws Exception {
+            String someToken = "someToken";
+            String someErrorMSG = "someErrorMSG";
+            when(service.checkToken(someToken)).thenThrow(new AuthenticationException(someErrorMSG));
+
+            mockMvc.perform(
+                    get("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(someToken)
+            ).andExpect(status().isBadRequest())
+                    .andExpect(content().string(someErrorMSG));
+        }
     }
 
-    @Test
-    void shouldReturnOkWhenTokenIsCorrect() throws Exception {
-        String someToken = "someToken";
-        when(service.checkToken(someToken)).thenReturn(true);
-
-        mockMvc.perform(
-                get("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(someToken)
-        ).andExpect(status().isOk());
-    }
-
-    @Test
-    void shouldReturnBadRequestIFTokenISNotCorrect() throws Exception {
-        String someToken = "someToken";
-        when(service.checkToken(someToken)).thenReturn(false);
-
-        mockMvc.perform(
-                get("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(someToken)
-        ).andExpect(status().isBadRequest());
-    }
-
-    //simple controller advice test
-    @Test
-    void shouldReturnBadRequestIfExceptionOccur() throws Exception {
-        String someToken = "someToken";
-        String someErrorMSG = "someErrorMSG";
-        when(service.checkToken(someToken)).thenThrow(new AuthenticationException(someErrorMSG));
-
-        mockMvc.perform(
-                get("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(someToken)
-        ).andExpect(status().isBadRequest())
-                .andExpect(content().string(someErrorMSG));
-    }
 }
