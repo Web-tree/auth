@@ -72,6 +72,19 @@ public class AuthConfigurationProperties {
          */
         private String socialLogin = "/rest/social/login";
 
+        /**
+         * Endpoint for checking user token
+         */
+        private String checkToken = "/rest/checkToken";
+
+        public String getCheckToken() {
+            return checkToken;
+        }
+
+        public void setCheckToken(String checkToken) {
+            this.checkToken = checkToken;
+        }
+
         public String getRegister() {
             return register;
         }

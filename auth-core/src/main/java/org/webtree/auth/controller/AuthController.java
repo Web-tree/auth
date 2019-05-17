@@ -3,11 +3,7 @@ package org.webtree.auth.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.webtree.auth.domain.AuthDetails;
 import org.webtree.auth.domain.Token;
 import org.webtree.auth.service.AuthenticationService;
@@ -25,7 +21,6 @@ public class AuthController {
     }
 
     @PostMapping("#{AuthPropertiesBean.route.register}")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> register(AuthDetails authDetails) {
         return service.registerIfNotExists(authDetails) ?
                 ResponseEntity.status(HttpStatus.CREATED).build() : ResponseEntity.badRequest().build();
@@ -34,5 +29,12 @@ public class AuthController {
     @PostMapping("#{AuthPropertiesBean.route.login}")
     public Token login(AuthDetails authDetails) {
         return service.login(authDetails);
+    }
+
+    @GetMapping("#{AuthPropertiesBean.route.checkToken}")
+    public ResponseEntity<?> checkToken(@RequestBody String token) {
+        return service.checkToken(token) ?
+                ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus. UNAUTHORIZED).build();
+
     }
 }

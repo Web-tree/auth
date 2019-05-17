@@ -13,4 +13,6 @@ public interface AuthenticationService extends UserDetailsService {
 
     @Override
     User loadUserByUsername(String username) throws UsernameNotFoundException;
+
+    boolean checkToken(String someToken);
 }

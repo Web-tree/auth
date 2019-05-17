@@ -77,7 +77,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(
                         properties.getRoute().getLogin(),
                         properties.getRoute().getRegister(),
-                        properties.getRoute().getSocialLogin()
+                        properties.getRoute().getSocialLogin(),
+                        properties.getRoute().getCheckToken()
                 ).permitAll()
                 .anyRequest().authenticated();
 
