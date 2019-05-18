@@ -9,5 +9,5 @@ import org.webtree.auth.extension.EmbeddedCassandraExtension;
 @ExtendWith({SpringExtension.class, EmbeddedCassandraExtension.class})
 @SpringBootTest
 @ActiveProfiles("cassandra-test")
-public abstract class AbstractCassandraTest {
+abstract class AbstractCassandraTest {
 }

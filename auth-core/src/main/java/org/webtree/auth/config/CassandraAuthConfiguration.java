@@ -22,7 +22,7 @@ public class CassandraAuthConfiguration extends AbstractCassandraConfiguration {
     private static final String ENTITY_BASE_PACKAGE = "org.webtree.auth.domain";
     @Value("${spring.data.cassandra.port}")
     private int port;
-    @Value("${spring.data.cassandra.contact-points}")
+    @Value("${spring.data.cassandra.contactpoints}")
     private String contactPoints;
     @Value("${spring.data.cassandra.keyspace-name}")
     private String keySpace;
