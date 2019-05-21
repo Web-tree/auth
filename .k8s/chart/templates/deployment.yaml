@@ -29,6 +29,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+
+            {{if .Values.app.setSecrets}}
             - name: AUTH_ENCODER_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -44,6 +46,8 @@ spec:
                 secretKeyRef:
                   name: auth-encoder
                   key: jwtSecret
+            {{end}}
+
             - name: SPRING_DATA_CASSANDRA_CONTACTPOINTS
               value: {{ .Values.cassandra.host }}
             - name: SPRING_DATA_CASSANDRA_PORT
