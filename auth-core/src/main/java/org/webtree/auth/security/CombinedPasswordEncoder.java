@@ -31,8 +31,8 @@ public class CombinedPasswordEncoder implements PasswordEncoder {
         return encryptor.encrypt(encodedPassword);
     }
 
-    public boolean matches(CharSequence charSequence, String encodedPassword) {
+    public boolean matches(CharSequence rawPassword, String encodedPassword) {
         String decryptedPassword = encryptor.decrypt(encodedPassword);
-        return encoder.matches(charSequence, decryptedPassword);
+        return encoder.matches(rawPassword, decryptedPassword);
     }
 }

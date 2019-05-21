@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "auth.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "auth.name" . }}
+    helm.sh/chart: {{ include "auth.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "auth.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "auth.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: AUTH_ENCODER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: auth-encoder
+                  key: encoderPassword
+            - name: AUTH_ENCODER_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: auth-encoder
+                  key: encoderSalt
+            - name: AUTH_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: auth-encoder
+                  key: jwtSecret
+            - name: SPRING_DATA_CASSANDRA_CONTACTPOINTS
+              value: {{ .Values.cassandra.host }}
+            - name: SPRING_DATA_CASSANDRA_PORT
+              value: "9042"
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ .Values.app.profile }}
+
+          ports:
+            - name: http
+              containerPort: 9000
+              protocol: TCP
+          {{/*livenessProbe:*/}}
+            {{/*httpGet:*/}}
+              {{/*path: /*/}}
+              {{/*port: http*/}}
+          {{/*readinessProbe:*/}}
+            {{/*httpGet:*/}}
+              {{/*path: /*/}}
+              {{/*port: http*/}}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

@@ -18,10 +18,6 @@ import java.util.function.Function;
 
 @Service
 public class JwtTokenService {
-    static final String CLAIM_KEY_USERNAME = "sub";
-    static final String CLAIM_KEY_AUDIENCE = "aud";
-    static final String CLAIM_KEY_CREATED = "iat";
-    //todo extract
 
     @Value("#{AuthPropertiesBean.jwt.secret}")
     private String secret;
@@ -43,7 +39,6 @@ public class JwtTokenService {
             throw new AuthenticationException("Can't parse token", e);
         }
     }
-
 
     public Date getIssuedAtDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getIssuedAt);
@@ -86,9 +81,9 @@ public class JwtTokenService {
         return (lastPasswordReset != null && created.before(lastPasswordReset));
     }
 
-    public String generateToken(User details) {
+    public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, details.getUsername(), details.getId());
+        return doGenerateToken(claims, user.getUsername(), user.getId());
     }
 
     private String doGenerateToken(Map<String, Object> claims, String subject, String id) {

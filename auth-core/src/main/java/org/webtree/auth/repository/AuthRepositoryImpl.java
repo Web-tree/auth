@@ -35,8 +35,6 @@ public class AuthRepositoryImpl implements AuthRepository {
                         .value("password", user.getPassword())
                         .value("username", user.getUsername())
                         .ifNotExists());
-
-
         return user;
     }
 }

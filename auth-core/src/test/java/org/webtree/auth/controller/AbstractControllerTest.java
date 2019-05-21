@@ -26,10 +26,10 @@ public abstract class AbstractControllerTest extends AbstractSpringTest {
     protected ObjectMapper objectMapper;
 
     @MockBean
-    private AuthRepository repository;
+    protected AuthRepository authRepository;
 
     @MockBean
-    private UserLockRepository lockRepository;
+    protected UserLockRepository lockRepository;
 
     @MockBean
     private CassandraAuthConfiguration configuration;
