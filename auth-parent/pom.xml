@@ -25,6 +25,7 @@
         <jackson-data-bind>2.9.4</jackson-data-bind>
         <mockito-junit-jupiter-version>2.23.0</mockito-junit-jupiter-version>
         <cassandra-unit.version>3.3.0.2</cassandra-unit.version>
+        <spring-actuator.version>2.1.5.RELEASE</spring-actuator.version>
     </properties>
 
     <dependencyManagement>
@@ -48,6 +49,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-configuration-processor</artifactId>
                 <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-actuator</artifactId>
+                <version> ${spring-actuator.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.data</groupId>

@@ -15,3 +15,9 @@ auth:
     salt: 7a72815eaaea468012770bacd16a579ca44a6339
   jwt:
     secret: kxpQ4g5vmuQN6XqYVqLbg55ckZVBu3EkhPpY8r7hZgVciLKG0DGi0ZYn3Ua4qTZonbvcPr44CbizwHBMt5LonGSMrx3OCixBFLyVyG8ABsygpIeJOv3rwWEh6TSLPYFgLXN3KTRh2ZUbEAWFqgKOOXlURJnzpx4UaeeWhNdnw4gJ0AvIKFQjy2d8HW6SBussyIDKL2GU
+management:
+  endpoints:
+    enabled-by-default: false
+  endpoint:
+    health:
+      enabled: true
