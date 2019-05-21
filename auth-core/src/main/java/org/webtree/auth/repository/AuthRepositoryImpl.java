@@ -12,8 +12,6 @@ import java.util.UUID;
 
 import static org.springframework.data.cassandra.core.query.Criteria.where;
 
-
-
 @Repository
 public class AuthRepositoryImpl implements AuthRepository {
     private CassandraOperations operations;
@@ -37,8 +35,6 @@ public class AuthRepositoryImpl implements AuthRepository {
                         .value("password", user.getPassword())
                         .value("username", user.getUsername())
                         .ifNotExists());
-
-
         return user;
     }
 }

@@ -7,20 +7,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.webtree.auth.domain.User;
 import org.webtree.auth.exception.AuthenticationException;
 import org.webtree.auth.time.TimeProvider;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -140,14 +136,6 @@ public class JwtTokenServiceTest {
 
         String token = createToken();
         assertThat(jwtTokenService.validateToken(token, details)).isTrue();
-    }
-
-    private Map<String, Object> createClaims(String creationDate) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put(JwtTokenService.CLAIM_KEY_USERNAME, TEST_USERNAME);
-        claims.put(JwtTokenService.CLAIM_KEY_AUDIENCE, "testAudience");
-        claims.put(JwtTokenService.CLAIM_KEY_CREATED, DateUtil.parseDatetime(creationDate));
-        return claims;
     }
 
     private String createToken() {

@@ -5,8 +5,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.webtree.auth</groupId>
-    <artifactId>core</artifactId>
+    <artifactId>auth-core</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <parent>
@@ -147,12 +146,26 @@
             <artifactId>cassandra-unit</artifactId>
             <version>${cassandra-unit.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.12.2</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

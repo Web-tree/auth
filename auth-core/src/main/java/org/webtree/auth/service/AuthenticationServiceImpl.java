@@ -62,7 +62,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if (lockRepository.saveIfNotExist(lock)) {
             try {
-                repository.saveIfNotExists(user);
+                if (existsByUsername(user.getUsername())) { // TODO: cover by test
+                    return false;
+                } else {
+                    repository.saveIfNotExists(user);
+                }
             } finally {
                 lockRepository.delete(lock);
             }
