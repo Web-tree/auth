@@ -136,7 +136,7 @@
                     <target>${java.version}</target>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
-                    <fork>true</fork>
+                    <fork>false</fork>
                 </configuration>
             </plugin>
             <plugin>

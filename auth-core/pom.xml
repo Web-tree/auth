@@ -13,6 +13,7 @@
         <groupId>org.webtree.auth</groupId>
         <artifactId>auth-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../auth-parent/pom.xml</relativePath>
     </parent>
 
     <repositories>
