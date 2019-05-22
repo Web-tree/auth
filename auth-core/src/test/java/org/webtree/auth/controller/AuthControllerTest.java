@@ -91,8 +91,6 @@ public class AuthControllerTest extends AbstractControllerTest {
 
     @Test
     void shouldReturnOkWhenTokenIsCorrect(@Autowired JwtTokenService tokenService) throws Exception {
-//        String someToken = "someToken";
-//        when(service.checkToken(someToken)).thenReturn(true);
         User user = new User();
         user.setId("123");
         user.setUsername(USERNAME);
@@ -100,7 +98,8 @@ public class AuthControllerTest extends AbstractControllerTest {
         when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
         mockMvc.perform(
                 get("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(token)
-        ).andExpect(status().isOk());
+        ).andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(USERNAME));
     }
 
     @Test

@@ -115,7 +115,7 @@ class AuthenticationServiceTest {
         given(repository.findByUsername(anyString())).willReturn(Optional.of(user));
         given(jwtTokenService.validateToken(someToken,user)).willReturn(true);
 
-        assertThat(service.checkToken(someToken)).isTrue();
+        assertThat(service.checkToken(someToken)).isEqualTo(user.getUsername());
     }
 
     @Test
@@ -125,7 +125,7 @@ class AuthenticationServiceTest {
         given(repository.findByUsername(anyString())).willReturn(Optional.of(user));
         given(jwtTokenService.validateToken(someToken,user)).willReturn(true);
 
-        assertThat(service.checkToken(someToken)).isTrue();
+        assertThat(service.checkToken(someToken)).isEqualTo(user.getUsername());
     }
 
     @Test
@@ -134,6 +134,6 @@ class AuthenticationServiceTest {
         given(jwtTokenService.getUsernameFromToken(someToken)).willReturn(user.getUsername());
         given(repository.findByUsername(anyString())).willReturn(Optional.empty());
 
-        assertThat(service.checkToken(someToken)).isFalse();
+        assertThat(service.checkToken(someToken)).isNull();
     }
 }
