@@ -99,13 +99,13 @@ public class AuthControllerTest extends AbstractControllerTest {
         mockMvc.perform(
                 get("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(token)
         ).andExpect(status().isOk())
-                .andExpect(jsonPath("$").value(USERNAME));
+                .andExpect(jsonPath("$.username").value(USERNAME));
     }
 
     @Test
     void shouldReturnBadRequestIFTokenISNotCorrect() throws Exception {
         String someToken = "someToken";
-        doReturn(false).when(service).checkToken(someToken);
+        doReturn(null).when(service).checkToken(someToken);
 
         mockMvc.perform(
                 get("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(someToken)

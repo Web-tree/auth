@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.webtree.auth.api.model.UsernameResponse;
 import org.webtree.auth.domain.AuthDetails;
 import org.webtree.auth.domain.Token;
 import org.webtree.auth.service.AuthenticationService;
@@ -36,7 +37,8 @@ public class AuthController {
         String username = service.checkToken(token);
 
         return username != null ?
-                ResponseEntity.ok().body(username) : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                ResponseEntity.ok().body(new UsernameResponse(username)) :
+                ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
     }
 }
