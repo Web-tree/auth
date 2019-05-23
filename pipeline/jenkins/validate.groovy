@@ -135,7 +135,7 @@ private void deployDevEnv(buildVersion, coreTag, projectName, tier) {
     sh 'helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/'
     sh "helm delete ${deployName} --purge || true"
     sh 'helm dependency build'
-    sh "helm install --wait --name=${deployName} --namespace=webtree-${tier} --set nameOverride=${deployName},ingress.host=${coreUrl},image.tag=${coreTag},cassandra.host=${deployName}-cassandra -f values.${tier}.yaml ."
+    sh "helm install --wait --name=${deployName} --namespace=webtree-${tier} --set nameOverride=${deployName},ingress.hosts[0].paths[0]=/rest,ingress.hosts[0].host=${coreUrl},image.tag=${coreTag},cassandra.host=${deployName}-cassandra -f values.${tier}.yaml ."
     String message = "Test system provisioned on url https://${coreUrl}"
     sendPrComment('auth', env.CHANGE_ID, message)
 
