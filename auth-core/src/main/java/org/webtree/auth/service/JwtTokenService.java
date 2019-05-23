@@ -34,7 +34,12 @@ public class JwtTokenService {
 
     public String getUsernameFromToken(String token) {
         try {
-            return getClaimFromToken(token, Claims::getSubject);
+            String username = getClaimFromToken(token, Claims::getSubject);
+
+            if (username == null)
+                throw new AuthenticationException("Unexpected username");
+
+            return username;
         } catch (JwtException e) {
             throw new AuthenticationException("Can't parse token", e);
         }
@@ -72,7 +77,7 @@ public class JwtTokenService {
                 .getBody();
     }
 
-    private Boolean isTokenExpired(String token) {
+    public Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(timeProvider.now());
     }

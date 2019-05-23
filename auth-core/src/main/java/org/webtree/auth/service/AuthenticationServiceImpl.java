@@ -37,12 +37,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public String checkToken(String someToken) {
-        String usernameFromToken = jwtTokenService.getUsernameFromToken(someToken);
-        Optional<User> optionalUser = repository.findByUsername(usernameFromToken).
-                filter((user) -> jwtTokenService.validateToken(someToken, user));
-
-        return optionalUser.isPresent() ? usernameFromToken : null;
+    public Optional<String> checkToken(String token) {
+        if (!jwtTokenService.isTokenExpired(token)) {
+            return Optional.of(jwtTokenService.getUsernameFromToken(token));
+        }
+        return Optional.empty();
     }
 
     @Override

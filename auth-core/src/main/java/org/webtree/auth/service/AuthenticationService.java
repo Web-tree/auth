@@ -6,6 +6,8 @@ import org.webtree.auth.domain.AuthDetails;
 import org.webtree.auth.domain.Token;
 import org.webtree.auth.domain.User;
 
+import java.util.Optional;
+
 public interface AuthenticationService extends UserDetailsService {
     boolean registerIfNotExists(AuthDetails userDetails);
 
@@ -14,5 +16,5 @@ public interface AuthenticationService extends UserDetailsService {
     @Override
     User loadUserByUsername(String username) throws UsernameNotFoundException;
 
-    String checkToken(String someToken);
+    Optional<String> checkToken(String someToken);
 }

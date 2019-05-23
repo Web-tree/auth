@@ -9,6 +9,8 @@ import org.webtree.auth.domain.AuthDetails;
 import org.webtree.auth.domain.Token;
 import org.webtree.auth.service.AuthenticationService;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping
 @CrossOrigin(value = "#{AuthPropertiesBean.frontendOrigin}")
@@ -34,10 +36,9 @@ public class AuthController {
 
     @GetMapping("#{AuthPropertiesBean.route.checkToken}")
     public ResponseEntity<?> checkToken(@RequestBody String token) {
-        String username = service.checkToken(token);
-
-        return username != null ?
-                ResponseEntity.ok().body(new UsernameResponse(username)) :
+        Optional<String> username = service.checkToken(token);
+        return username.isPresent() ?
+                ResponseEntity.ok().body(new UsernameResponse(username.get())) :
                 ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
     }
