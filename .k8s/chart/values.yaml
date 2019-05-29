@@ -4,12 +4,13 @@
 
 app:
   profile: prod
+  setSecrets: true
 
 replicaCount: 2
 
 image:
   repository: webtree/auth
-  tag: auth-56-helm
+  tag: latest
   pullPolicy: IfNotPresent
 
 nameOverride: ""

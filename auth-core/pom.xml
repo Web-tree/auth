@@ -7,6 +7,9 @@
 
     <artifactId>auth-core</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <properties>
+        <spring-boot-maven-plugin.version>2.0.5.RELEASE</spring-boot-maven-plugin.version>
+    </properties>
 
     <parent>
         <groupId>org.webtree.auth</groupId>
@@ -14,16 +17,6 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../auth-parent/pom.xml</relativePath>
     </parent>
-
-    <repositories>
-        <repository>
-            <id>Web-tree</id>
-            <url>https://artifactory.webtree.org/artifactory/dev</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
@@ -122,6 +115,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -155,4 +149,19 @@
         </plugins>
     </build>
 
+    <repositories>
+        <repository>
+            <id>bintray-merapar-maven</id>
+            <name>bintray</name>
+            <url>http://dl.bintray.com/merapar/maven</url>
+        </repository>
+        <repository>
+            <id>spring-libs-release</id>
+            <name>Spring Releases</name>
+            <url>https://repo.spring.io/libs-release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>

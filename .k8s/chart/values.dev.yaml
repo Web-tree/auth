@@ -1,0 +1,8 @@
+app:
+  setSecrets: false
+cassandra:
+  nodes:
+    enabled: true
+  config:
+    cluster_size: 1
+    seed_size: 1

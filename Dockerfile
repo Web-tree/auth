@@ -4,8 +4,7 @@ FROM webtree/build-images:maven-jdk-8 as builder
 RUN mkdir /build
 WORKDIR /build
 COPY . .
-WORKDIR /build/auth-core
-RUN mvn package -DskipTests
+RUN mvn package -Dmaven.test.skip=true
 
 # Main
 FROM openjdk:8-slim
