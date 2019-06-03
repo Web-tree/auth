@@ -1,6 +1,5 @@
 package org.webtree.auth.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -14,15 +13,11 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
-
 @Component
 public class AuthDetailsRequestBodyProcessor extends RequestResponseBodyMethodProcessor {
     public AuthDetailsRequestBodyProcessor(List<HttpMessageConverter<?>> converters) {
         super(converters);
     }
-
-    @Value("#{AuthPropertiesBean.authDetailsClass}")
-    private Class<? extends AuthDetails> detailsImplClass;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -30,9 +25,9 @@ public class AuthDetailsRequestBodyProcessor extends RequestResponseBodyMethodPr
     }
 
     @Override
-    protected <T> Object readWithMessageConverters(NativeWebRequest webRequest,
+    protected Object readWithMessageConverters(NativeWebRequest webRequest,
                                                    MethodParameter parameter, Type paramType)
             throws IOException, HttpMediaTypeNotSupportedException, HttpMessageNotReadableException {
-        return super.readWithMessageConverters(webRequest, parameter, detailsImplClass);
+        return super.readWithMessageConverters(webRequest, parameter, paramType);
     }
 }

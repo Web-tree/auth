@@ -29,7 +29,7 @@ public class JwtTokenServiceTest {
     @Mock
     private TimeProvider timeProviderMock;
 
-    private User details;
+    private User user;
 
     @InjectMocks
     private JwtTokenService jwtTokenService;
@@ -38,7 +38,12 @@ public class JwtTokenServiceTest {
     void setUp() {
         jwtTokenService.setExpiration(3600L);
         jwtTokenService.setSecret("mySecret");
-        details = new User(USER_ID, TEST_USERNAME, PASSWORD, new Date());
+        user = User.newBuilder()
+                .withId(USER_ID)
+                .withUsername(TEST_USERNAME)
+                .withPassword(PASSWORD)
+                .withLastPasswordResetDate(new Date())
+                .build();
     }
 
     @Test
@@ -129,16 +134,13 @@ public class JwtTokenServiceTest {
 
     @Test
     void canValidateToken() {
-        when(timeProviderMock.now())
-                .thenReturn(DateUtil.now());
-        User details = mock(User.class);
-        when(details.getUsername()).thenReturn(TEST_USERNAME);
+        when(timeProviderMock.now()).thenReturn(DateUtil.now());
 
-        String token = createToken();
-        assertThat(jwtTokenService.validateToken(token, details)).isTrue();
+        String token = jwtTokenService.generateToken(User.newBuilder().withUsername(TEST_USERNAME).build());
+        assertThat(jwtTokenService.isTokenValid(token)).isTrue();
     }
 
     private String createToken() {
-        return jwtTokenService.generateToken(details);
+        return jwtTokenService.generateToken(user);
     }
 }

@@ -21,9 +21,7 @@ class AuthRepositoryTest extends AbstractCassandraTest {
 
     @BeforeEach
     void setUp() {
-        user = new User();
-        user.setPassword(PASSWORD);
-        user.setUsername(USERNAME);
+        user = User.newBuilder().withPassword(PASSWORD).withUsername(USERNAME).build();
     }
 
     @Test

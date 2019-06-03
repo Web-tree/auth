@@ -65,7 +65,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
             // For simple validation it is completely sufficient to just check the token integrity.
             // You don't have to call the database compellingly. Again it's up to you ;)
-            if (user != null && jwtTokenService.validateToken(authToken, user)) {
+            if (user != null && jwtTokenService.isTokenValid(authToken)) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user,
                         null, user.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

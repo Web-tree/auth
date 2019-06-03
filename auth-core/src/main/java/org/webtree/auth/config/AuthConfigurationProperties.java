@@ -3,7 +3,6 @@ package org.webtree.auth.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.webtree.auth.domain.AuthDetails;
-import org.webtree.auth.domain.AuthDetailsImpl;
 
 @Configuration("AuthPropertiesBean")
 @ConfigurationProperties(prefix = "auth")
@@ -16,7 +15,7 @@ public class AuthConfigurationProperties {
     /**
      * Implementation of AuthDetails that is deserialized from request body from frontend.
      */
-    private Class<? extends AuthDetails> authDetailsClass = AuthDetailsImpl.class;
+    private Class<? extends AuthDetails> authDetailsClass = AuthDetails.class;
 
 
     /**

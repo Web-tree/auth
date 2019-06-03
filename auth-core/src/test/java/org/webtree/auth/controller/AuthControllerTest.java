@@ -9,12 +9,12 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.webtree.auth.domain.AuthDetails;
-import org.webtree.auth.domain.AuthDetailsImpl;
 import org.webtree.auth.domain.User;
 import org.webtree.auth.exception.AuthenticationException;
 import org.webtree.auth.security.CombinedPasswordEncoder;
 import org.webtree.auth.service.AuthenticationService;
 import org.webtree.auth.service.JwtTokenService;
+import org.webtree.auth.service.JwtTokenService.InvalidTokenException;
 
 import java.util.Optional;
 
@@ -44,7 +44,7 @@ public class AuthControllerTest extends AbstractControllerTest {
     @BeforeEach
     public void setUp() {
         super.setUp();
-        authDetails = new AuthDetailsImpl(USERNAME, PASSWORD);
+        authDetails = new AuthDetails(USERNAME, PASSWORD);
     }
 
     @Test
@@ -62,8 +62,7 @@ public class AuthControllerTest extends AbstractControllerTest {
 
     @Test
     void shouldReturnBadRequestIfUserExist() throws Exception {
-        User user = new User();
-        user.setUsername(USERNAME);
+        User user = User.newBuilder().withUsername(USERNAME).build();
         when(authRepository.findByUsername(eq(USERNAME))).thenReturn(Optional.of(user));
         mockMvc
                 .perform(post("/rest/user/register")
@@ -74,9 +73,7 @@ public class AuthControllerTest extends AbstractControllerTest {
 
     @Test
     void whenLoginWithExistedUser_shouldReturnToken() throws Exception {
-        User user = new User();
-        user.setId("someId");
-        user.setUsername(USERNAME);
+        User user = User.newBuilder().withId("someId").withUsername(USERNAME).build();
         when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
 
         mockMvc.perform(
@@ -91,9 +88,7 @@ public class AuthControllerTest extends AbstractControllerTest {
 
     @Test
     void shouldReturnOkWhenTokenIsCorrect(@Autowired JwtTokenService tokenService) throws Exception {
-        User user = new User();
-        user.setId("123");
-        user.setUsername(USERNAME);
+        User user = User.newBuilder().withId("123").withUsername(USERNAME).build();
         String token = tokenService.generateToken(user);
         when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
         mockMvc.perform(
@@ -104,11 +99,11 @@ public class AuthControllerTest extends AbstractControllerTest {
 
     @Test
     void shouldReturnBadRequestIFTokenISNotCorrect() throws Exception {
-        String someToken = "someToken";
-        doReturn(null).when(service).checkToken(someToken);
+        String invalidToken = "someToken";
+        doThrow(new InvalidTokenException()).when(service).decodeToken(invalidToken);
 
         mockMvc.perform(
-                get("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(someToken)
+                get("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(invalidToken)
         ).andExpect(status().is(401));
     }
 
@@ -117,7 +112,7 @@ public class AuthControllerTest extends AbstractControllerTest {
     void shouldReturnBadRequestIfExceptionOccur() throws Exception {
         String someToken = "someToken";
         String someErrorMSG = "someErrorMSG";
-        doThrow(new AuthenticationException(someErrorMSG)).when(service).checkToken(someToken);
+        doThrow(new AuthenticationException(someErrorMSG)).when(service).decodeToken(someToken);
 
         mockMvc.perform(
                 get("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(someToken)

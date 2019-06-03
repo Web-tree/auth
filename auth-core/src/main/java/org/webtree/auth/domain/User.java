@@ -1,5 +1,6 @@
 package org.webtree.auth.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.Indexed;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.Objects;
 
 @Table("user")
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class User implements UserDetails {
 
     private static final long serialVersionUID = -979784771401667331L;
@@ -30,13 +32,18 @@ public class User implements UserDetails {
     @Column
     private Date lastPasswordResetDate;
 
-    public User(String id, String username, String password, Date lastPasswordResetDate) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.lastPasswordResetDate = lastPasswordResetDate;
+    public static UserBuilder newBuilder() {
+        return new UserBuilder();
     }
 
+    private User(UserBuilder builder) {
+        this.id = builder.id;
+        this.username = builder.username;
+        this.password = builder.password;
+        this.lastPasswordResetDate = builder.lastPasswordResetDate;
+    }
+
+    // Spring Data only!
     public User() {
     }
 
@@ -116,5 +123,43 @@ public class User implements UserDetails {
         return Objects.equals(id, user.id) &&
                 Objects.equals(username, user.username) &&
                 Objects.equals(password, user.password);
+    }
+
+    public static final class UserBuilder {
+        private String id;
+        private String username;
+        private String password;
+        private Date lastPasswordResetDate;
+
+        private UserBuilder() {
+        }
+
+        public static UserBuilder anUser() {
+            return new UserBuilder();
+        }
+
+        public UserBuilder withId(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public UserBuilder withUsername(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public UserBuilder withPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public UserBuilder withLastPasswordResetDate(Date lastPasswordResetDate) {
+            this.lastPasswordResetDate = lastPasswordResetDate;
+            return this;
+        }
+
+        public User build() {
+            return new User(this);
+        }
     }
 }
