@@ -9,11 +9,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.webtree.auth.domain.AuthDetails;
-import org.webtree.auth.domain.AuthDetailsImpl;
 import org.webtree.auth.domain.User;
 import org.webtree.auth.domain.UserLock;
 import org.webtree.auth.repository.AuthRepository;
 import org.webtree.auth.repository.UserLockRepository;
+import org.webtree.auth.service.JwtTokenService.InvalidTokenException;
 
 import java.util.Optional;
 
@@ -52,8 +52,8 @@ class AuthenticationServiceTest {
 
     @BeforeEach
     void setUp() {
-        authDetails = new AuthDetailsImpl("name", "pass");
-        user = new User("", "u", "p", null);
+        authDetails = new AuthDetails("name", "pass");
+        user = User.newBuilder().withUsername("u").withPassword("p").build();
     }
 
     @Test
@@ -78,12 +78,12 @@ class AuthenticationServiceTest {
 
     @Test
     void shouldThrowExceptionWhenUsernameWasNotFoundWhenLogin() {
-        given(repository.findByUsername(anyString())).willReturn(Optional.ofNullable(null));
+        given(repository.findByUsername(anyString())).willReturn(Optional.empty());
         assertThatThrownBy(() -> service.login(authDetails)).isInstanceOf(BadCredentialsException.class);
     }
 
     @Test
-    public void shouldReturnFalseIfUserDoNotExistButCantMakeLock() {
+    void shouldReturnFalseIfUserDoNotExistButCantMakeLock() {
         given(factory.createUserOf(authDetails)).willReturn(user);
         given(repository.findByUsername(anyString())).willReturn(Optional.empty());
         given(lockRepository.saveIfNotExist(any(UserLock.class))).willReturn(false);
@@ -92,7 +92,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    public void shouldReturnFalseIfUserExists() {
+    void shouldReturnFalseIfUserExists() {
         given(factory.createUserOf(authDetails)).willReturn(user);
         given(repository.findByUsername(anyString())).willReturn(Optional.of(user));
         assertThat(service.registerIfNotExists(authDetails)).isFalse();
@@ -101,7 +101,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    public void shouldReturnTrueIfUserDoesNotExists() {
+    void shouldReturnTrueIfUserDoesNotExists() {
         given(factory.createUserOf(authDetails)).willReturn(user);
         given(repository.findByUsername(anyString())).willReturn(Optional.empty());
         given(lockRepository.saveIfNotExist(any(UserLock.class))).willReturn(true);
@@ -109,31 +109,21 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void shouldReturnTrueIfTokenISCorrect(){
+    void shouldDecodeUserFromToken(){
         String someToken = "someToken";
-        given(jwtTokenService.getUsernameFromToken(someToken)).willReturn(user.getUsername());
-        given(repository.findByUsername(anyString())).willReturn(Optional.of(user));
-        given(jwtTokenService.validateToken(someToken,user)).willReturn(true);
+        String username = "someUsername";
+        given(jwtTokenService.isTokenValid(someToken)).willReturn(true);
+        given(jwtTokenService.getUsernameFromToken(someToken)).willReturn(username);
 
-        assertThat(service.checkToken(someToken)).isTrue();
+        assertThat(service.decodeToken(someToken).getUsername()).isEqualTo(username);
     }
 
     @Test
-    void shouldReturnFalseIfTokenIsNotCorrect(){
+    void shouldThrowExceptionIfTokenIsNotCorrect(){
         String someToken = "someToken";
-        given(jwtTokenService.getUsernameFromToken(someToken)).willReturn(user.getUsername());
-        given(repository.findByUsername(anyString())).willReturn(Optional.of(user));
-        given(jwtTokenService.validateToken(someToken,user)).willReturn(true);
+        given(jwtTokenService.isTokenValid(someToken)).willReturn(false);
 
-        assertThat(service.checkToken(someToken)).isTrue();
+        assertThatThrownBy(() -> service.decodeToken(someToken)).isInstanceOf(InvalidTokenException.class);
     }
 
-    @Test
-    void shouldReturnFalseIfCantFindUserByNameFromToken() {
-        String someToken = "someToken";
-        given(jwtTokenService.getUsernameFromToken(someToken)).willReturn(user.getUsername());
-        given(repository.findByUsername(anyString())).willReturn(Optional.empty());
-
-        assertThat(service.checkToken(someToken)).isFalse();
-    }
 }

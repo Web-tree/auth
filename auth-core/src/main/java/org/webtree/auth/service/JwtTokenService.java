@@ -34,7 +34,12 @@ public class JwtTokenService {
 
     public String getUsernameFromToken(String token) {
         try {
-            return getClaimFromToken(token, Claims::getSubject);
+            String username = getClaimFromToken(token, Claims::getSubject);
+
+            if (username == null)
+                throw new AuthenticationException("Unexpected username");
+
+            return username;
         } catch (JwtException e) {
             throw new AuthenticationException("Can't parse token", e);
         }
@@ -61,7 +66,7 @@ public class JwtTokenService {
         this.secret = secret;
     }
 
-    void setExpiration(Long expiration) {
+    void setExpiration(long expiration) {
         this.expiration = expiration;
     }
 
@@ -72,12 +77,12 @@ public class JwtTokenService {
                 .getBody();
     }
 
-    private Boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(timeProvider.now());
     }
 
-    private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
+    private boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
         return (lastPasswordReset != null && created.before(lastPasswordReset));
     }
 
@@ -102,7 +107,7 @@ public class JwtTokenService {
                 .compact();
     }
 
-    public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
+    public boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
         final Date created = getIssuedAtDateFromToken(token);
         return !isCreatedBeforeLastPasswordReset(created, lastPasswordReset) && (!isTokenExpired(token));
     }
@@ -121,16 +126,14 @@ public class JwtTokenService {
                 .compact();
     }
 
-    public Boolean validateToken(String token, User user) {
-        final String username = getUsernameFromToken(token);
-        final Date created = getIssuedAtDateFromToken(token);
-        //final Date expiration = getExpirationDateFromToken(token);
-        return username.equals(user.getUsername()) &&
-                !isTokenExpired(token);
-        // !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate());
+    public boolean isTokenValid(String token) {
+        return !isTokenExpired(token);
     }
 
     private Date calculateExpirationDate(Date createdDate) {
         return new Date(createdDate.getTime() + expiration * 1000);
+    }
+
+    public static class InvalidTokenException extends RuntimeException {
     }
 }

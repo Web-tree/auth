@@ -11,8 +11,6 @@ import org.webtree.auth.domain.UserLock;
 import org.webtree.auth.repository.AuthRepository;
 import org.webtree.auth.repository.UserLockRepository;
 
-import java.util.Optional;
-
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
     private JwtTokenService jwtTokenService;
@@ -37,10 +35,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public boolean checkToken(String someToken) {
-        String usernameFromToken = jwtTokenService.getUsernameFromToken(someToken);
-        Optional<User> user = repository.findByUsername(usernameFromToken);
-        return user.isPresent() ? jwtTokenService.validateToken(someToken, user.get()) : false;
+    public User decodeToken(String token) {
+        if (!jwtTokenService.isTokenValid(token)) {
+            throw new JwtTokenService.InvalidTokenException();
+        }
+        return User.newBuilder()
+                .withUsername(jwtTokenService.getUsernameFromToken(token))
+                .build();
     }
 
     @Override
@@ -78,4 +79,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private boolean existsByUsername(String name) {
         return repository.findByUsername(name).isPresent();
     }
+
 }
