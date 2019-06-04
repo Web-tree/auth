@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Web-tree/auth.svg?branch=master)](https://travis-ci.org/Web-tree/auth)
+
 Current module provide basic authentication.
 
 For now its support tho methods: registration and login.
