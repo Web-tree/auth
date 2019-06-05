@@ -84,7 +84,7 @@ class AuthControllerTest {
         service.register(authDetails);
         Token token = service.login(authDetails);
         mockMvc.perform(
-                get("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(token.getToken())
+                post("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(token.getToken())
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(USERNAME));
     }

@@ -11,7 +11,7 @@ replicaCount: 2
 image:
   repository: webtree/auth
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 nameOverride: ""
 fullnameOverride: ""
