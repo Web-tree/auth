@@ -1,0 +1,3 @@
+[submodule "auth-web"]
+	path = auth-web
+	url = git@github.com:Web-tree/auth-web.git
