@@ -1,28 +1,36 @@
 package org.webtree.auth.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.springframework.data.cassandra.core.mapping.Column;
-import org.springframework.data.cassandra.core.mapping.Indexed;
-import org.springframework.data.cassandra.core.mapping.PrimaryKey;
-import org.springframework.data.cassandra.core.mapping.Table;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
 
-@Table("user")
+@Table
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+@Entity
 public class User implements UserDetails {
 
     private static final long serialVersionUID = -979784771401667331L;
 
-    @PrimaryKey
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(updatable = false, nullable = false)
     private String id;
 
-    @Indexed
     @Column
     private String username;
 
@@ -32,7 +40,7 @@ public class User implements UserDetails {
     @Column
     private Date lastPasswordResetDate;
 
-    public static UserBuilder newBuilder() {
+    public static UserBuilder builder() {
         return new UserBuilder();
     }
 
@@ -92,7 +100,7 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public void setUsername(@Indexed String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 

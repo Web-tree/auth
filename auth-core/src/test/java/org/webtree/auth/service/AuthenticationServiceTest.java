@@ -1,6 +1,7 @@
 package org.webtree.auth.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -53,77 +54,93 @@ class AuthenticationServiceTest {
     @BeforeEach
     void setUp() {
         authDetails = new AuthDetails("name", "pass");
-        user = User.newBuilder().withUsername("u").withPassword("p").build();
+        user = User.builder().withUsername("u").withPassword("p").build();
     }
 
-    @Test
-    void shouldReturnUserByUsername() {
-        given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.of(user));
-        assertThat(service.loadUserByUsername(TEST_USERNAME)).isEqualTo(user);
+    @Nested class FindTests {
+        @Test
+        void shouldReturnUserByUsername() {
+            given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.of(user));
+            assertThat(service.loadUserByUsername(TEST_USERNAME)).isEqualTo(user);
+        }
+
+        @Test
+        void shouldThrowExceptionIfUserWasNotFound() {
+            given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.empty());
+            assertThatThrownBy(() -> service.loadUserByUsername(TEST_USERNAME))
+                    .isInstanceOf(UsernameNotFoundException.class);
+        }
+
+        @Test
+        void shouldReturnTokenWhenLogin() {
+            given(repository.findByUsername(anyString())).willReturn(Optional.of(user));
+            given(jwtTokenService.generateToken(user)).willReturn(TOKEN);
+            assertThat(service.login(authDetails).getToken()).isEqualTo(TOKEN);
+        }
+
+        @Test
+        void shouldThrowExceptionWhenUsernameWasNotFoundWhenLogin() {
+            given(repository.findByUsername(anyString())).willReturn(Optional.empty());
+            assertThatThrownBy(() -> service.login(authDetails)).isInstanceOf(BadCredentialsException.class);
+        }
+
     }
 
-    @Test
-    void shouldThrowExceptionIfUserWasNotFound() {
-        given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.empty());
-        assertThatThrownBy(() -> service.loadUserByUsername(TEST_USERNAME))
-                .isInstanceOf(UsernameNotFoundException.class);
+    @Nested class RegisterTests {
+
+        @Test
+        void shouldReturnFalseIfUserDoNotExistButCantMakeLock() {
+            given(factory.createUserOf(authDetails)).willReturn(user);
+            given(repository.findByUsername(anyString())).willReturn(Optional.empty());
+            given(lockRepository.saveIfNotExist(any(UserLock.class))).willReturn(false);
+            assertThat(service.registerIfNotExists(authDetails)).isFalse();
+            verify(repository, never()).saveIfNotExists(any(User.class));
+        }
+
+        @Test
+        void shouldReturnFalseIfUserExists() {
+            given(factory.createUserOf(authDetails)).willReturn(user);
+            given(repository.findByUsername(anyString())).willReturn(Optional.of(user));
+            assertThat(service.registerIfNotExists(authDetails)).isFalse();
+            verifyNoMoreInteractions(lockRepository);
+            verify(repository, never()).saveIfNotExists(any(User.class));
+        }
+
+        @Test
+        void shouldReturnTrueIfUserDoesNotExists() {
+            given(factory.createUserOf(authDetails)).willReturn(user);
+            given(repository.findByUsername(anyString())).willReturn(Optional.empty());
+            given(lockRepository.saveIfNotExist(any(UserLock.class))).willReturn(true);
+            assertThat(service.registerIfNotExists(authDetails)).isTrue();
+        }
+
+        @Test
+        void shouldPropagateRegistrationToRepository() {
+            service.register(user);
+            verify(repository).save(user);
+        }
     }
 
-    @Test
-    void shouldReturnTokenWhenLogin() {
-        given(repository.findByUsername(anyString())).willReturn(Optional.of(user));
-        given(jwtTokenService.generateToken(user)).willReturn(TOKEN);
-        assertThat(service.login(authDetails).getToken()).isEqualTo(TOKEN);
-    }
+    @Nested class TokenTests {
 
-    @Test
-    void shouldThrowExceptionWhenUsernameWasNotFoundWhenLogin() {
-        given(repository.findByUsername(anyString())).willReturn(Optional.empty());
-        assertThatThrownBy(() -> service.login(authDetails)).isInstanceOf(BadCredentialsException.class);
-    }
+        @Test
+        void shouldDecodeUserFromToken(){
+            String someToken = "someToken";
+            String username = "someUsername";
+            given(jwtTokenService.isTokenValid(someToken)).willReturn(true);
+            given(jwtTokenService.getUsernameFromToken(someToken)).willReturn(username);
 
-    @Test
-    void shouldReturnFalseIfUserDoNotExistButCantMakeLock() {
-        given(factory.createUserOf(authDetails)).willReturn(user);
-        given(repository.findByUsername(anyString())).willReturn(Optional.empty());
-        given(lockRepository.saveIfNotExist(any(UserLock.class))).willReturn(false);
-        assertThat(service.registerIfNotExists(authDetails)).isFalse();
-        verify(repository, never()).saveIfNotExists(any(User.class));
-    }
+            assertThat(service.decodeToken(someToken).getUsername()).isEqualTo(username);
+        }
 
-    @Test
-    void shouldReturnFalseIfUserExists() {
-        given(factory.createUserOf(authDetails)).willReturn(user);
-        given(repository.findByUsername(anyString())).willReturn(Optional.of(user));
-        assertThat(service.registerIfNotExists(authDetails)).isFalse();
-        verifyNoMoreInteractions(lockRepository);
-        verify(repository, never()).saveIfNotExists(any(User.class));
-    }
+        @Test
+        void shouldThrowExceptionIfTokenIsNotCorrect(){
+            String someToken = "someToken";
+            given(jwtTokenService.isTokenValid(someToken)).willReturn(false);
 
-    @Test
-    void shouldReturnTrueIfUserDoesNotExists() {
-        given(factory.createUserOf(authDetails)).willReturn(user);
-        given(repository.findByUsername(anyString())).willReturn(Optional.empty());
-        given(lockRepository.saveIfNotExist(any(UserLock.class))).willReturn(true);
-        assertThat(service.registerIfNotExists(authDetails)).isTrue();
-    }
+            assertThatThrownBy(() -> service.decodeToken(someToken)).isInstanceOf(InvalidTokenException.class);
+        }
 
-    @Test
-    void shouldDecodeUserFromToken(){
-        String someToken = "someToken";
-        String username = "someUsername";
-        given(jwtTokenService.isTokenValid(someToken)).willReturn(true);
-        given(jwtTokenService.getUsernameFromToken(someToken)).willReturn(username);
-
-        assertThat(service.decodeToken(someToken).getUsername()).isEqualTo(username);
-    }
-
-    @Test
-    void shouldThrowExceptionIfTokenIsNotCorrect(){
-        String someToken = "someToken";
-        given(jwtTokenService.isTokenValid(someToken)).willReturn(false);
-
-        assertThatThrownBy(() -> service.decodeToken(someToken)).isInstanceOf(InvalidTokenException.class);
     }
 
 }

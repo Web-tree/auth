@@ -39,9 +39,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (!jwtTokenService.isTokenValid(token)) {
             throw new JwtTokenService.InvalidTokenException();
         }
-        return User.newBuilder()
+        return User.builder()
                 .withUsername(jwtTokenService.getUsernameFromToken(token))
                 .build();
+    }
+
+    @Override public void register(User user) {
+
     }
 
     @Override

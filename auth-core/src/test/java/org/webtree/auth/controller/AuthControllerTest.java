@@ -62,7 +62,7 @@ public class AuthControllerTest extends AbstractControllerTest {
 
     @Test
     void shouldReturnBadRequestIfUserExist() throws Exception {
-        User user = User.newBuilder().withUsername(USERNAME).build();
+        User user = User.builder().withUsername(USERNAME).build();
         when(authRepository.findByUsername(eq(USERNAME))).thenReturn(Optional.of(user));
         mockMvc
                 .perform(post("/rest/user/register")
@@ -73,7 +73,7 @@ public class AuthControllerTest extends AbstractControllerTest {
 
     @Test
     void whenLoginWithExistedUser_shouldReturnToken() throws Exception {
-        User user = User.newBuilder().withId("someId").withUsername(USERNAME).build();
+        User user = User.builder().withId("someId").withUsername(USERNAME).build();
         when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
 
         mockMvc.perform(
@@ -88,7 +88,7 @@ public class AuthControllerTest extends AbstractControllerTest {
 
     @Test
     void shouldReturnOkWhenTokenIsCorrect(@Autowired JwtTokenService tokenService) throws Exception {
-        User user = User.newBuilder().withId("123").withUsername(USERNAME).build();
+        User user = User.builder().withId("123").withUsername(USERNAME).build();
         String token = tokenService.generateToken(user);
         when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
         mockMvc.perform(

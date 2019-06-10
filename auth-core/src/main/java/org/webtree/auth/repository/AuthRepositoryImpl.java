@@ -4,6 +4,7 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.data.cassandra.core.query.Query;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.webtree.auth.domain.User;
 
@@ -14,11 +15,13 @@ import static org.springframework.data.cassandra.core.query.Criteria.where;
 
 @Repository
 public class AuthRepositoryImpl implements AuthRepository {
+    private final JpaRepository<User, String> userRepository;
     private CassandraOperations operations;
 
     @Autowired
-    public AuthRepositoryImpl(CassandraOperations operations) {
+    public AuthRepositoryImpl(CassandraOperations operations, UserRepository userRepository) {
         this.operations = operations;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -36,5 +39,10 @@ public class AuthRepositoryImpl implements AuthRepository {
                         .value("username", user.getUsername())
                         .ifNotExists());
         return user;
+    }
+
+    @Override
+    public User save(User user) {
+        return userRepository.save(user);
     }
 }
