@@ -4,7 +4,7 @@ import org.webtree.auth.domain.User;
 
 import java.util.Optional;
 
-public interface AuthRepository  {
+public interface AuthRepository {
     Optional<User> findByUsername(String name);
 
     @Deprecated

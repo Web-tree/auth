@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,6 +33,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 class AuthenticationServiceTest {
     private static final String TEST_USERNAME = "Johnny";
     private static final String TOKEN = "token_1";
+    private static final String TEST_PASSWORD = "pass";
 
     @Mock
     private AuthRepository repository;
@@ -51,9 +54,12 @@ class AuthenticationServiceTest {
     @InjectMocks
     private AuthenticationServiceImpl service;
 
+    @Captor
+    private ArgumentCaptor<User> userCaptor;
+
     @BeforeEach
     void setUp() {
-        authDetails = new AuthDetails("name", "pass");
+        authDetails = new AuthDetails(TEST_USERNAME, TEST_PASSWORD);
         user = User.builder().withUsername("u").withPassword("p").build();
     }
 
@@ -116,8 +122,13 @@ class AuthenticationServiceTest {
 
         @Test
         void shouldPropagateRegistrationToRepository() {
-            service.register(user);
-            verify(repository).save(user);
+            service.register(authDetails);
+
+            verify(repository).save(userCaptor.capture());
+
+            User user = userCaptor.getValue();
+            assertThat(user.getUsername()).isEqualTo(TEST_USERNAME);
+            assertThat(user.getPassword()).isEqualTo(TEST_PASSWORD);
         }
     }
 

@@ -17,5 +17,5 @@ public interface AuthenticationService extends UserDetailsService {
 
     User decodeToken(String someToken);
 
-    void register(User user);
+    void register(AuthDetails authDetails);
 }

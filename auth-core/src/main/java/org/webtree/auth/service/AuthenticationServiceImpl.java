@@ -44,8 +44,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
     }
 
-    @Override public void register(User user) {
-
+    @Override
+    public void register(AuthDetails authDetails) {
+        repository.save(User.builder()
+                .withUsername(authDetails.getUsername())
+                .withPassword(authDetails.getPassword())
+                .build()
+        );
     }
 
     @Override
