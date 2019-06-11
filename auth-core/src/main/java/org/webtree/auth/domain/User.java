@@ -1,5 +1,6 @@
 package org.webtree.auth.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
@@ -88,6 +89,7 @@ public class User implements UserDetails {
         return this.username;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return this.password;
     }

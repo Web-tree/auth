@@ -13,21 +13,17 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.webtree.auth.domain.AuthDetails;
 import org.webtree.auth.domain.User;
-import org.webtree.auth.domain.UserLock;
 import org.webtree.auth.repository.AuthRepository;
-import org.webtree.auth.repository.UserLockRepository;
 import org.webtree.auth.service.JwtTokenService.InvalidTokenException;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationServiceTest {
@@ -38,18 +34,12 @@ class AuthenticationServiceTest {
     @Mock
     private AuthRepository repository;
 
-    @Mock
-    private UserLockRepository lockRepository;
-
     private User user;
 
     @Mock
     private JwtTokenService jwtTokenService;
 
     private AuthDetails authDetails;
-
-    @Mock
-    private UserDetailsFactory factory;
 
     @InjectMocks
     private AuthenticationServiceImpl service;
@@ -95,32 +85,6 @@ class AuthenticationServiceTest {
     @Nested class RegisterTests {
 
         @Test
-        void shouldReturnFalseIfUserDoNotExistButCantMakeLock() {
-            given(factory.createUserOf(authDetails)).willReturn(user);
-            given(repository.findByUsername(anyString())).willReturn(Optional.empty());
-            given(lockRepository.saveIfNotExist(any(UserLock.class))).willReturn(false);
-            assertThat(service.registerIfNotExists(authDetails)).isFalse();
-            verify(repository, never()).saveIfNotExists(any(User.class));
-        }
-
-        @Test
-        void shouldReturnFalseIfUserExists() {
-            given(factory.createUserOf(authDetails)).willReturn(user);
-            given(repository.findByUsername(anyString())).willReturn(Optional.of(user));
-            assertThat(service.registerIfNotExists(authDetails)).isFalse();
-            verifyNoMoreInteractions(lockRepository);
-            verify(repository, never()).saveIfNotExists(any(User.class));
-        }
-
-        @Test
-        void shouldReturnTrueIfUserDoesNotExists() {
-            given(factory.createUserOf(authDetails)).willReturn(user);
-            given(repository.findByUsername(anyString())).willReturn(Optional.empty());
-            given(lockRepository.saveIfNotExist(any(UserLock.class))).willReturn(true);
-            assertThat(service.registerIfNotExists(authDetails)).isTrue();
-        }
-
-        @Test
         void shouldPropagateRegistrationToRepository() {
             service.register(authDetails);
 
@@ -130,12 +94,48 @@ class AuthenticationServiceTest {
             assertThat(user.getUsername()).isEqualTo(TEST_USERNAME);
             assertThat(user.getPassword()).isEqualTo(TEST_PASSWORD);
         }
+
+        @Test
+        void shouldThrowExceptionWhenUserAlreadyExists() {
+            when(repository.findByUsername(TEST_USERNAME)).thenReturn(Optional.of(new User()));
+
+            assertThatThrownBy(() -> service.register(authDetails)).isInstanceOf(AuthenticationService.UserAlreadyRegistered.class);
+        }
+
+//        @Nested class old {
+//            @Test
+//            void shouldReturnFalseIfUserDoNotExistButCantMakeLock() {
+//                given(factory.createUserOf(authDetails)).willReturn(user);
+//                given(repository.findByUsername(anyString())).willReturn(Optional.empty());
+//                given(lockRepository.saveIfNotExist(any(UserLock.class))).willReturn(false);
+//                assertThat(service.registerIfNotExists(authDetails)).isFalse();
+//                verify(repository, never()).saveIfNotExists(any(User.class));
+//            }
+//
+//            @Test
+//            void shouldReturnFalseIfUserExists() {
+//                given(factory.createUserOf(authDetails)).willReturn(user);
+//                given(repository.findByUsername(anyString())).willReturn(Optional.of(user));
+//                assertThat(service.registerIfNotExists(authDetails)).isFalse();
+//                verifyNoMoreInteractions(lockRepository);
+//                verify(repository, never()).saveIfNotExists(any(User.class));
+//            }
+//
+//            @Test
+//            void shouldReturnTrueIfUserDoesNotExists() {
+//                given(factory.createUserOf(authDetails)).willReturn(user);
+//                given(repository.findByUsername(anyString())).willReturn(Optional.empty());
+//                given(lockRepository.saveIfNotExist(any(UserLock.class))).willReturn(true);
+//                assertThat(service.registerIfNotExists(authDetails)).isTrue();
+//            }
+//        }
+
     }
 
     @Nested class TokenTests {
 
         @Test
-        void shouldDecodeUserFromToken(){
+        void shouldDecodeUserFromToken() {
             String someToken = "someToken";
             String username = "someUsername";
             given(jwtTokenService.isTokenValid(someToken)).willReturn(true);
@@ -145,7 +145,7 @@ class AuthenticationServiceTest {
         }
 
         @Test
-        void shouldThrowExceptionIfTokenIsNotCorrect(){
+        void shouldThrowExceptionIfTokenIsNotCorrect() {
             String someToken = "someToken";
             given(jwtTokenService.isTokenValid(someToken)).willReturn(false);
 

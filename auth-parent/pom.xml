@@ -14,7 +14,6 @@
     <properties>
         <spring-boot.version>2.0.5.RELEASE</spring-boot.version>
         <spring-core.version>5.1.0.RELEASE</spring-core.version>
-        <spring-data-cassandra>2.1.6.RELEASE</spring-data-cassandra>
         <jjwt.version>0.7.0</jjwt.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
@@ -24,7 +23,6 @@
         <mockito-core.version>2.22.0</mockito-core.version>
         <jackson-data-bind>2.9.4</jackson-data-bind>
         <mockito-junit-jupiter-version>2.23.0</mockito-junit-jupiter-version>
-        <cassandra-unit.version>3.3.0.2</cassandra-unit.version>
         <testcontainer.version>1.11.3</testcontainer.version>
     </properties>
 
@@ -54,11 +52,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-jpa</artifactId>
                 <version>${spring-boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-cassandra</artifactId>
-                <version>${spring-data-cassandra}</version>
             </dependency>
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
@@ -122,11 +115,6 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-junit-jupiter</artifactId>
                 <version>${mockito-junit-jupiter-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.cassandraunit</groupId>
-                <artifactId>cassandra-unit</artifactId>
-                <version>${cassandra-unit.version}</version>
             </dependency>
 
             <dependency>

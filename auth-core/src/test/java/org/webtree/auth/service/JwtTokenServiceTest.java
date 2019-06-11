@@ -139,6 +139,11 @@ public class JwtTokenServiceTest {
         assertThat(jwtTokenService.isTokenValid(token)).isTrue();
     }
 
+    @Test
+    void whenPassInvalidTokenShouldReturnFalse() {
+        assertThat(jwtTokenService.isTokenValid("InvalidToken")).isFalse();
+    }
+
     private String createToken() {
         return jwtTokenService.generateToken(user);
     }
