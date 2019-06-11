@@ -148,7 +148,7 @@
                 <version>3.0.0-M3</version>
                 <configuration>
                     <skipTests>false</skipTests>
-                    <testFailureIgnore>true</testFailureIgnore>
+                    <testFailureIgnore>false</testFailureIgnore>
                     <forkMode>once</forkMode>
                 </configuration>
             </plugin>
