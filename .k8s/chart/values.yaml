@@ -60,3 +60,6 @@ cassandra:
   persistence:
     enabled: false
   host: cassandra
+  selector:
+    nodeSelector:
+      "node-role.kubernetes.io/backend":
