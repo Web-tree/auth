@@ -17,7 +17,6 @@ import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,7 +37,7 @@ public class JwtTokenServiceTest {
     void setUp() {
         jwtTokenService.setExpiration(3600L);
         jwtTokenService.setSecret("mySecret");
-        user = User.newBuilder()
+        user = User.builder()
                 .withId(USER_ID)
                 .withUsername(TEST_USERNAME)
                 .withPassword(PASSWORD)
@@ -136,8 +135,13 @@ public class JwtTokenServiceTest {
     void canValidateToken() {
         when(timeProviderMock.now()).thenReturn(DateUtil.now());
 
-        String token = jwtTokenService.generateToken(User.newBuilder().withUsername(TEST_USERNAME).build());
+        String token = jwtTokenService.generateToken(User.builder().withUsername(TEST_USERNAME).build());
         assertThat(jwtTokenService.isTokenValid(token)).isTrue();
+    }
+
+    @Test
+    void whenPassInvalidTokenShouldReturnFalse() {
+        assertThat(jwtTokenService.isTokenValid("InvalidToken")).isFalse();
     }
 
     private String createToken() {

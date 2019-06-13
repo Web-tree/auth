@@ -3,7 +3,10 @@ package org.webtree.auth.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,7 +21,7 @@ import java.util.function.Function;
 
 @Service
 public class JwtTokenService {
-
+    private static final Logger LOG = LoggerFactory.getLogger(JwtTokenService.class);
     @Value("#{AuthPropertiesBean.jwt.secret}")
     private String secret;
 
@@ -95,7 +98,7 @@ public class JwtTokenService {
         final Date createdDate = timeProvider.now();
         final Date expirationDate = calculateExpirationDate(createdDate);
 
-        System.out.println("doGenerateToken " + createdDate);
+        LOG.info("doGenerateToken {}", createdDate);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -127,7 +130,12 @@ public class JwtTokenService {
     }
 
     public boolean isTokenValid(String token) {
-        return !isTokenExpired(token);
+        try {
+            return !isTokenExpired(token);
+        } catch (MalformedJwtException exception) {
+            LOG.warn("Token can't be parsed. {}", token, exception);
+            return false;
+        }
     }
 
     private Date calculateExpirationDate(Date createdDate) {
