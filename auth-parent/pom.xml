@@ -22,7 +22,7 @@
         <assert-j-core.version>3.11.1</assert-j-core.version>
         <mockito-core.version>2.22.0</mockito-core.version>
         <jackson-data-bind>2.9.4</jackson-data-bind>
-        <mockito-junit-jupiter-version>2.23.0</mockito-junit-jupiter-version>
+        <mockito-version>2.28.2</mockito-version>
         <testcontainer.version>1.11.3</testcontainer.version>
     </properties>
 
@@ -46,11 +46,6 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-configuration-processor</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-jpa</artifactId>
                 <version>${spring-boot.version}</version>
             </dependency>
             <dependency>
@@ -113,8 +108,19 @@
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
                 <artifactId>mockito-junit-jupiter</artifactId>
-                <version>${mockito-junit-jupiter-version}</version>
+                <version>${mockito-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mock-server</groupId>
+                <artifactId>mockserver-netty</artifactId>
+                <version>3.10.8</version>
             </dependency>
 
             <dependency>

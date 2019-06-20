@@ -2,24 +2,34 @@ package org.webtree.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.webtree.auth.annotations.WithDatabase;
 import org.webtree.auth.domain.AuthDetails;
 import org.webtree.auth.domain.Token;
+import org.webtree.auth.domain.User;
+import org.webtree.auth.repository.AuthRepository;
 import org.webtree.auth.service.AuthenticationService;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WithDatabase
 @AutoConfigureMockMvc
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
 class AuthControllerTest {
     private final static String USERNAME = "JOHN_SNOW";
     private static final String PASSWORD =
@@ -27,47 +37,56 @@ class AuthControllerTest {
                     "a1b2a1b2a1b2a1b2a1b2a1b2a1b2a1b2" +
                     "a1b2a1b2a1b2a1b2a1b2a1b2a1b2a1b2" +
                     "a1b2a1b2a1b2a1b2a1b2a1b2a1b2a1b2";
+    public static final String ID = "somdId";
 
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private AuthenticationService service;
+    @MockBean
+    private AuthRepository authRepository;
     private AuthDetails authDetails;
+    @Autowired
     private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         authDetails = new AuthDetails(USERNAME, PASSWORD);
-        objectMapper = new ObjectMapper();
     }
 
-    @Test
-    void shouldReturnOkIfUserDoesNotExist() throws Exception {
-        mockMvc
-                .perform(post("/rest/user/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(authDetails)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").isNotEmpty())
-                .andExpect(jsonPath("$.username").value(USERNAME))
-                .andExpect(jsonPath("$.password").doesNotExist())
-        ;
-        assertThat(service.login(authDetails)).isNotNull();
-    }
+    @Nested
+    class Registration {
 
-    @Test
-    void shouldReturnBadRequestIfUserExist() throws Exception {
-        service.register(authDetails);
-        mockMvc
-                .perform(post("/rest/user/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(authDetails)))
-                .andExpect(status().isBadRequest());
+        @Test
+        void shouldReturnOkIfUserDoesNotExist() throws Exception {
+            when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.empty());
+            when(authRepository.save(any())).thenReturn(User.builder().withId(ID).withUsername(USERNAME).withPassword(PASSWORD).build());
+            mockMvc
+                    .perform(post("/rest/user/register")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(authDetails)))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.id").value(ID))
+                    .andExpect(jsonPath("$.username").value(USERNAME))
+                    .andExpect(jsonPath("$.password").doesNotExist())
+            ;
+        }
+
+        @Test
+        void shouldReturnBadRequestIfUserExist() throws Exception {
+            when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.of(User.builder().build()));
+            mockMvc
+                    .perform(post("/rest/user/register")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(authDetails)))
+                    .andExpect(status().isBadRequest());
+        }
     }
 
     @Test
     void whenLoginWithExistedUser_shouldReturnToken() throws Exception {
-        service.register(authDetails);
+        User user = User.builder().withId(ID).withUsername(USERNAME).withPassword(PASSWORD).build();
+        when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
 
         mockMvc.perform(
                 post("/rest/token/new")
@@ -81,7 +100,9 @@ class AuthControllerTest {
 
     @Test
     void shouldReturnOkWhenTokenIsCorrect() throws Exception {
-        service.register(authDetails);
+        User user = User.builder().withId(ID).withUsername(USERNAME).withPassword(PASSWORD).build();
+        when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
+
         Token token = service.login(authDetails);
         mockMvc.perform(
                 get("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(token.getToken())

@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "auth.repo.url",
+      "type": "java.lang.String",
+      "description": "Url of repository service."
+    },
+    {
+      "name": "auth.repo.token",
+      "type": "java.lang.String",
+      "description": "Authorisation token."
+    }
+  ] }

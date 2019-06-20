@@ -1,44 +1,33 @@
 package org.webtree.auth.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.hibernate.annotations.GenericGenerator;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.webtree.auth.domain.view.Views;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
 
-@Table
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements UserDetails {
 
     private static final long serialVersionUID = -979784771401667331L;
 
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    @Column(updatable = false, nullable = false)
+    @JsonView(Views.Public.class)
     private String id;
 
-    @Column
+    @JsonView(Views.Public.class)
     private String username;
 
-    @Column
+    @JsonView(Views.Repo.class)
     private String password;
 
-    @Column
+    @JsonView(Views.Public.class)
     private Date lastPasswordResetDate;
 
     public static UserBuilder builder() {
@@ -89,7 +78,6 @@ public class User implements UserDetails {
         return this.username;
     }
 
-    @JsonIgnore
     public String getPassword() {
         return this.password;
     }
