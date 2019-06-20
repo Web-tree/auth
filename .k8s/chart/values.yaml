@@ -10,8 +10,8 @@ replicaCount: 2
 
 image:
   repository: webtree/auth
-  tag: latest
-  pullPolicy: IfNotPresent
+  tag: auth-67-sql
+  pullPolicy: Always
 
 nameOverride: ""
 fullnameOverride: ""
@@ -48,15 +48,12 @@ resources: {}
   #   memory: 128Mi
 
 nodeSelector:
-  "node-role.kubernetes.io/type": backend
+  "node-role.kubernetes.io/backend":
 
 tolerations: []
 
 affinity: {}
 
-cassandra:
-  nodes:
-    enabled: false
-  persistence:
-    enabled: false
-  host: cassandra
+mysql:
+  provision: false
+  host: mysql

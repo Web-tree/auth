@@ -11,7 +11,7 @@ const sequelize = new Sequelize(
     }
 );
 const user = User(sequelize, Sequelize);
-const models = { user: user };
+const models = { User: user };
 const connection = {};
 
 module.exports = async () => {

@@ -1,12 +1,13 @@
-const DataTypes = require('sequelize/lib/data-types');
+const Sequelize = require('sequelize');
 
 module.exports = (sequelize, type) => {
     return sequelize.define('user', {
         id: {
-            type: DataTypes.UUID,
-            primaryKey: true
+            primaryKey: true,
+            type: Sequelize.UUID,
+            defaultValue: require('uuid/v4')
         },
-        username: type.STRING,
+        username: {type: Sequelize.STRING, unique: true},
         password: type.STRING
     })
 };
