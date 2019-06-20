@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.within;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class JwtTokenServiceTest {
+class JwtTokenServiceTest {
     private static final String TEST_USERNAME = "testUser";
     private static final String USER_ID = "someUserId";
     private static final String PASSWORD = "someUserPassword";
@@ -66,7 +66,7 @@ public class JwtTokenServiceTest {
         assertThat(jwtTokenService.getUsernameFromToken(token)).isEqualTo(TEST_USERNAME);
     }
 
-    @Test()
+    @Test
     void shouldThrowExceptionIfTokenCantBeProcessed() {
         final String token = "123";
         assertThatThrownBy(() -> jwtTokenService.getUsernameFromToken(token))

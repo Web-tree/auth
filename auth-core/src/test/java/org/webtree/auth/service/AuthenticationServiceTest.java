@@ -97,39 +97,10 @@ class AuthenticationServiceTest {
 
         @Test
         void shouldThrowExceptionWhenUserAlreadyExists() {
-            when(repository.findByUsername(TEST_USERNAME)).thenReturn(Optional.of(new User()));
+            when(repository.findByUsername(TEST_USERNAME)).thenReturn(Optional.of(User.builder().build()));
 
             assertThatThrownBy(() -> service.register(authDetails)).isInstanceOf(AuthenticationService.UserAlreadyRegistered.class);
         }
-
-//        @Nested class old {
-//            @Test
-//            void shouldReturnFalseIfUserDoNotExistButCantMakeLock() {
-//                given(factory.createUserOf(authDetails)).willReturn(user);
-//                given(repository.findByUsername(anyString())).willReturn(Optional.empty());
-//                given(lockRepository.saveIfNotExist(any(UserLock.class))).willReturn(false);
-//                assertThat(service.registerIfNotExists(authDetails)).isFalse();
-//                verify(repository, never()).saveIfNotExists(any(User.class));
-//            }
-//
-//            @Test
-//            void shouldReturnFalseIfUserExists() {
-//                given(factory.createUserOf(authDetails)).willReturn(user);
-//                given(repository.findByUsername(anyString())).willReturn(Optional.of(user));
-//                assertThat(service.registerIfNotExists(authDetails)).isFalse();
-//                verifyNoMoreInteractions(lockRepository);
-//                verify(repository, never()).saveIfNotExists(any(User.class));
-//            }
-//
-//            @Test
-//            void shouldReturnTrueIfUserDoesNotExists() {
-//                given(factory.createUserOf(authDetails)).willReturn(user);
-//                given(repository.findByUsername(anyString())).willReturn(Optional.empty());
-//                given(lockRepository.saveIfNotExist(any(UserLock.class))).willReturn(true);
-//                assertThat(service.registerIfNotExists(authDetails)).isTrue();
-//            }
-//        }
-
     }
 
     @Nested class TokenTests {
