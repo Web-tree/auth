@@ -37,6 +37,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public User register(AuthDetails authDetails) {
+        repository.findByUsername(authDetails.getUsername()).ifPresent(u -> {throw new UserAlreadyRegistered();});
         return repository.save(User.builder()
                 .withUsername(authDetails.getUsername())
                 .withPassword(authDetails.getPassword())
