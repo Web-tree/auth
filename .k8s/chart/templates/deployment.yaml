@@ -34,24 +34,31 @@ spec:
             - name: AUTH_ENCODER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: auth-encoder
+                  name: auth
                   key: encoderPassword
             - name: AUTH_ENCODER_SALT
               valueFrom:
                 secretKeyRef:
-                  name: auth-encoder
+                  name: auth
                   key: encoderSalt
             - name: AUTH_JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: auth-encoder
+                  name: auth
                   key: jwtSecret
+            - name: AUTH_REPO_URL
+              valueFrom:
+                secretKeyRef:
+                  name: auth
+                  key: repoUrl
+            - name: AUTH_REPO_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: auth
+                  key: repoToken
+
             {{end}}
 
-            - name: SPRING_DATA_CASSANDRA_CONTACTPOINTS
-              value: {{ .Values.cassandra.host }}
-            - name: SPRING_DATA_CASSANDRA_PORT
-              value: "9042"
             - name: SPRING_PROFILES_ACTIVE
               value: {{ .Values.app.profile }}
 

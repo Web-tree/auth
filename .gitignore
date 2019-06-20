@@ -11,3 +11,10 @@
 # System Files
 .DS_Store
 Thumbs.db
+
+#secrets
+.k8s/secrets/repoToken
+.k8s/secrets/encoderPassword
+.k8s/secrets/encoderSalt
+.k8s/secrets/jwtSecret
+.k8s/secrets/repoUrl
