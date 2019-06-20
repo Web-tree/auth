@@ -1,8 +1,8 @@
 app:
   setSecrets: false
-cassandra:
-  nodes:
-    enabled: true
-  config:
-    cluster_size: 1
-    seed_size: 1
+mysql:
+  provision: true
+
+ingress:
+  hosts:
+    - host: "auth-dev.webtree.org"
