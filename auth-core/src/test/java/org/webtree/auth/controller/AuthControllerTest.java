@@ -22,7 +22,6 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -105,7 +104,7 @@ class AuthControllerTest {
 
         Token token = service.login(authDetails);
         mockMvc.perform(
-                get("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(token.getToken())
+                post("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(token.getToken())
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(USERNAME));
     }
@@ -115,7 +114,7 @@ class AuthControllerTest {
         String invalidToken = "someToken";
 
         mockMvc.perform(
-                get("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(invalidToken)
+                post("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(invalidToken)
         ).andExpect(status().isUnauthorized());
     }
 }
