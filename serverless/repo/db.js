@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const User = require('./models/user');
+const User = require('./repo/models/user');
 const sequelize = new Sequelize(
     process.env.DB_NAME,
     process.env.DB_USER,
