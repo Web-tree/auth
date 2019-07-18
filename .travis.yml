@@ -9,7 +9,7 @@ cache:
   - "$HOME/.m2"
 deploy:
   - provider: script
-    script: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && docker build -t webtree/auth:$TRAVIS_BRANCH && docker push webtree/auth:$TRAVIS_BRANCH
+    script: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && docker build -t webtree/auth:$TRAVIS_BRANCH . && docker push webtree/auth:$TRAVIS_BRANCH
     on:
       all_branches: true
 notifications:
