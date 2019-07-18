@@ -107,12 +107,16 @@ class AuthenticationServiceTest {
 
         @Test
         void shouldDecodeUserFromToken() {
-            String someToken = "someToken";
+            String token = "someToken";
             String username = "someUsername";
-            given(jwtTokenService.isTokenValid(someToken)).willReturn(true);
-            given(jwtTokenService.getUsernameFromToken(someToken)).willReturn(username);
+            String id = "someId";
+            given(jwtTokenService.isTokenValid(token)).willReturn(true);
+            given(jwtTokenService.getUsernameFromToken(token)).willReturn(username);
+            given(jwtTokenService.getIdFromToken(token)).willReturn(id);
 
-            assertThat(service.decodeToken(someToken).getUsername()).isEqualTo(username);
+            User user = service.decodeToken(token);
+            assertThat(user.getUsername()).isEqualTo(username);
+            assertThat(user.getId()).isEqualTo(id);
         }
 
         @Test

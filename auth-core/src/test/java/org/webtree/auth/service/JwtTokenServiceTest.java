@@ -144,6 +144,15 @@ class JwtTokenServiceTest {
         assertThat(jwtTokenService.isTokenValid("InvalidToken")).isFalse();
     }
 
+    @Test
+    void shouldContainIdInToken() {
+        when(timeProviderMock.now())
+                .thenReturn(DateUtil.now());
+        String token = jwtTokenService.generateToken(user);
+        String id = jwtTokenService.getIdFromToken(token);
+        assertThat(id).isEqualTo(USER_ID);
+    }
+
     private String createToken() {
         return jwtTokenService.generateToken(user);
     }

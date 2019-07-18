@@ -32,6 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         return User.builder()
                 .withUsername(jwtTokenService.getUsernameFromToken(token))
+                .withId(jwtTokenService.getIdFromToken(token))
                 .build();
     }
 
