@@ -7,6 +7,11 @@ matrix:
 cache:
   directories:
   - "$HOME/.m2"
+deploy:
+  - provider: script
+    script: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && docker build -t webtree/auth:$TRAVIS_BRANCH . && docker push webtree/auth:$TRAVIS_BRANCH
+    on:
+      all_branches: true
 notifications:
   slack:
     secure: gjmaZLzwkg/lTi84n0ib78cOgqFyjEAXiDmabedQtQOJG60gFvtIF2AmuBqQKBRQPbKM1tD/BX7FVbEGK/HykMlQ4xiPpSIgcuQ0iEnQCxl8eGiVk6aoqvMbd8DOuiJAB5yNgvNohXrQfGtn/CJs5RlZZ8xaYCzzPlFWBsKrijHScI1d6+Ooo8sEnT+gAl8DmISytrjeYkFFzLaGtyRGJYVKhkqYcUorIrKlxxSeGKp+TP4GgmYS21RBHabMdPRib6hu6Ri+FIhchOyTSAIgJLme6seCuWdXy8KlsZgc2R9hA2s3miViDBuzG9viLnJzbF/uiq1wJlIw4EN015TbhgcuY1uxcrWi7sh7AhHEBMJAVYpbaslQEc+ki3tyyyP82Ny6sUUDKCiItlJog8X14yFrPArCsmJdyD6w0Qpk72g5UxLC3mNgxb/vhZzYDuyKCISWoyBW35+eQGhSz3wAMJQOG++g5xVAZCTJiB4Y2+H4BtIRz8mQgffhZf3UywiiQPrd0THTVCMLU8LjZoDu5mRYewtMs5E3gt83oi+YB15GPRKGG2Y2uh17N9d5iVNOkq49tbW7/jc1474w7eisFuOBhWuuAFHF8180JsoItMzhxVhdPv/l6nT2cG0ngdW1J77Gr5dFwAFRoGayhQdU/qrgNdpucQfcbHuxb785xUk=
