@@ -48,6 +48,10 @@ public class JwtTokenService {
         }
     }
 
+    public String getIdFromToken(String token) {
+        return getClaimFromToken(token, Claims::getId);
+    }
+
     public Date getIssuedAtDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getIssuedAt);
     }
@@ -60,7 +64,7 @@ public class JwtTokenService {
         return getClaimFromToken(token, Claims::getAudience);
     }*/
 
-    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+    private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }

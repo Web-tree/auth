@@ -36,7 +36,7 @@ class AuthControllerTest {
                     "a1b2a1b2a1b2a1b2a1b2a1b2a1b2a1b2" +
                     "a1b2a1b2a1b2a1b2a1b2a1b2a1b2a1b2" +
                     "a1b2a1b2a1b2a1b2a1b2a1b2a1b2a1b2";
-    public static final String ID = "somdId";
+    private static final String ID = "someId";
 
     @Autowired
     private MockMvc mockMvc;
@@ -106,7 +106,8 @@ class AuthControllerTest {
         mockMvc.perform(
                 post("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(token.getToken())
         ).andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value(USERNAME));
+                .andExpect(jsonPath("$.username").value(USERNAME))
+                .andExpect(jsonPath("$.id").value(ID));
     }
 
     @Test
