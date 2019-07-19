@@ -51,6 +51,7 @@ const generatePolicy = function(user, effect, resource) {
 
   // Optional output with custom properties of the String, Number or Boolean type.
   authResponse.context = {
+    "id": user.id,
     "username": user.username
   };
   return authResponse;
