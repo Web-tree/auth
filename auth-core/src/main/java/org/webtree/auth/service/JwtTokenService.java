@@ -5,6 +5,8 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.webtree.auth.domain.User;
 import org.webtree.auth.exception.AuthenticationException;
 import org.webtree.auth.time.TimeProvider;
 
+import java.security.KeyPair;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,9 +33,16 @@ public class JwtTokenService {
 
     private TimeProvider timeProvider;
 
+    private static final SignatureAlgorithm ALGORITHM = SignatureAlgorithm.RS256;
+
     @Autowired
     public JwtTokenService(TimeProvider timeProvider) {
         this.timeProvider = timeProvider;
+    }
+
+    public static KeyPair getKeyPair() {
+        Keys.keyPairFor(ALGORITHM).getPublic().getFormat();
+        return Keys.keyPairFor(ALGORITHM);
     }
 
     public String getUsernameFromToken(String token) {
@@ -79,7 +89,7 @@ public class JwtTokenService {
 
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
-                .setSigningKey(secret)
+                .setSigningKey(getKeyPair().getPublic())
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -110,7 +120,7 @@ public class JwtTokenService {
                 .setId(id)
                 .setIssuedAt(createdDate)
                 .setExpiration(expirationDate)
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(ALGORITHM, getKeyPair().getPrivate())
                 .compact();
     }
 
@@ -129,7 +139,7 @@ public class JwtTokenService {
 
         return Jwts.builder()
                 .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(ALGORITHM, getKeyPair().getPrivate())
                 .compact();
     }
 
