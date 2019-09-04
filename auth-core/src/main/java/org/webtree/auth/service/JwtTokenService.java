@@ -5,7 +5,6 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.webtree.auth.domain.User;
 import org.webtree.auth.exception.AuthenticationException;
 import org.webtree.auth.time.TimeProvider;
+import org.webtree.auth.util.Pkcs12Keys;
 
 import java.security.KeyPair;
 import java.util.Date;
@@ -25,24 +25,18 @@ import java.util.function.Function;
 @Service
 public class JwtTokenService {
     private static final Logger LOG = LoggerFactory.getLogger(JwtTokenService.class);
-    @Value("#{AuthPropertiesBean.jwt.secret}")
-    private String secret;
+    private static final SignatureAlgorithm ALGORITHM = SignatureAlgorithm.RS256;
+    private static final String KEYSTORE = "src/main/resources/keystore.p12";
+    private static final KeyPair keyPair = Pkcs12Keys.keyPairForFile(KEYSTORE, "mypass", "mytest");
 
     @Value("#{AuthPropertiesBean.jwt.expiration}")
     private Long expiration;
 
     private TimeProvider timeProvider;
 
-    private static final SignatureAlgorithm ALGORITHM = SignatureAlgorithm.RS256;
-
     @Autowired
     public JwtTokenService(TimeProvider timeProvider) {
         this.timeProvider = timeProvider;
-    }
-
-    public static KeyPair getKeyPair() {
-        Keys.keyPairFor(ALGORITHM).getPublic().getFormat();
-        return Keys.keyPairFor(ALGORITHM);
     }
 
     public String getUsernameFromToken(String token) {
@@ -70,17 +64,9 @@ public class JwtTokenService {
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
-    /*public String getAudienceFromToken(String token) {
-        return getClaimFromToken(token, Claims::getAudience);
-    }*/
-
     private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
-    }
-
-    void setSecret(String secret) {
-        this.secret = secret;
     }
 
     void setExpiration(long expiration) {
@@ -89,7 +75,7 @@ public class JwtTokenService {
 
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
-                .setSigningKey(getKeyPair().getPublic())
+                .setSigningKey(keyPair.getPublic())
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -120,7 +106,7 @@ public class JwtTokenService {
                 .setId(id)
                 .setIssuedAt(createdDate)
                 .setExpiration(expirationDate)
-                .signWith(ALGORITHM, getKeyPair().getPrivate())
+                .signWith(ALGORITHM, keyPair.getPrivate())
                 .compact();
     }
 
@@ -139,7 +125,7 @@ public class JwtTokenService {
 
         return Jwts.builder()
                 .setClaims(claims)
-                .signWith(ALGORITHM, getKeyPair().getPrivate())
+                .signWith(ALGORITHM, keyPair.getPrivate())
                 .compact();
     }
 

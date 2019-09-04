@@ -36,7 +36,7 @@ class JwtTokenServiceTest {
     @BeforeEach
     void setUp() {
         jwtTokenService.setExpiration(3600L);
-        jwtTokenService.setSecret("mySecret");
+
         user = User.builder()
                 .withId(USER_ID)
                 .withUsername(TEST_USERNAME)
