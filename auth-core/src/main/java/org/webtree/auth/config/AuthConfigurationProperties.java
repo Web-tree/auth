@@ -123,6 +123,8 @@ public class AuthConfigurationProperties {
          * Signing key for jwt token.
          */
         private String secret;
+        private String privateKey;
+        private String publicKey;
 
         /**
          * Token TTL before expire.
@@ -151,6 +153,22 @@ public class AuthConfigurationProperties {
 
         public void setExpiration(Long expiration) {
             this.expiration = expiration;
+        }
+
+        public String getPrivateKey() {
+            return privateKey;
+        }
+
+        public void setPrivateKey(String privateKey) {
+            this.privateKey = privateKey;
+        }
+
+        public String getPublicKey() {
+            return publicKey;
+        }
+
+        public void setPublicKey(String publicKey) {
+            this.publicKey = publicKey;
         }
     }
 

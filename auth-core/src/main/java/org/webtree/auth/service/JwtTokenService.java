@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.webtree.auth.domain.User;
 import org.webtree.auth.exception.AuthenticationException;
 import org.webtree.auth.time.TimeProvider;
+import org.webtree.auth.util.KeyUtil;
 
+import java.security.KeyPair;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,25 +24,35 @@ import java.util.function.Function;
 @Service
 public class JwtTokenService {
     private static final Logger LOG = LoggerFactory.getLogger(JwtTokenService.class);
+    private static final String PKCS_12 = "PKCS12";
+    private static final SignatureAlgorithm ALGORITHM = SignatureAlgorithm.RS256;
+
     @Value("#{AuthPropertiesBean.jwt.secret}")
     private String secret;
-
+    @Value("#{AuthPropertiesBean.jwt.privateKey}")
+    private String privateKey;
+    @Value("#{AuthPropertiesBean.jwt.publicKey}")
+    private String publicKey;
     @Value("#{AuthPropertiesBean.jwt.expiration}")
     private Long expiration;
+    private KeyPair keyPair;
 
     private TimeProvider timeProvider;
 
     @Autowired
     public JwtTokenService(TimeProvider timeProvider) {
         this.timeProvider = timeProvider;
+        this.keyPair = new KeyPair(KeyUtil.getPublicKey(publicKey.getBytes(), PKCS_12),
+                KeyUtil.getPrivateKey(privateKey.getBytes(), PKCS_12));
     }
 
     public String getUsernameFromToken(String token) {
         try {
             String username = getClaimFromToken(token, Claims::getSubject);
 
-            if (username == null)
+            if (username == null) {
                 throw new AuthenticationException("Unexpected username");
+            }
 
             return username;
         } catch (JwtException e) {
@@ -79,7 +91,7 @@ public class JwtTokenService {
 
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
-                .setSigningKey(secret)
+                .setSigningKey(keyPair.getPublic())
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -110,7 +122,7 @@ public class JwtTokenService {
                 .setId(id)
                 .setIssuedAt(createdDate)
                 .setExpiration(expirationDate)
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(ALGORITHM, keyPair.getPrivate())
                 .compact();
     }
 
@@ -129,7 +141,7 @@ public class JwtTokenService {
 
         return Jwts.builder()
                 .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(ALGORITHM, keyPair.getPrivate())
                 .compact();
     }
 
