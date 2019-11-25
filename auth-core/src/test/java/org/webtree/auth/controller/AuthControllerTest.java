@@ -17,10 +17,13 @@ import org.webtree.auth.domain.Token;
 import org.webtree.auth.domain.User;
 import org.webtree.auth.repository.AuthRepository;
 import org.webtree.auth.service.AuthenticationService;
+import org.webtree.auth.time.TimeProvider;
 
+import java.util.Date;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -44,6 +47,8 @@ class AuthControllerTest {
     private AuthenticationService service;
     @MockBean
     private AuthRepository authRepository;
+    @MockBean
+    private TimeProvider timeProvider;
     private AuthDetails authDetails;
     @Autowired
     private ObjectMapper objectMapper;
@@ -111,11 +116,26 @@ class AuthControllerTest {
     }
 
     @Test
-    void shouldReturnBadRequestIFTokenISNotCorrect() throws Exception {
+    void shouldReturnUnauthorizedWhenTokenIsNotCorrect() throws Exception {
         String invalidToken = "someToken";
 
         mockMvc.perform(
                 post("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(invalidToken)
+        ).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenTokenIsExpired() throws Exception {
+        User user = User.builder().withId(ID).withUsername(USERNAME).withPassword(PASSWORD).build();
+        when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
+        reset(timeProvider);
+        when(timeProvider.now()).thenReturn(new Date(0));
+        String expiredToken = service.login(authDetails).getToken();
+        reset(timeProvider);
+        when(timeProvider.now()).thenReturn(new Date());
+
+        mockMvc.perform(
+                post("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(expiredToken)
         ).andExpect(status().isUnauthorized());
     }
 }

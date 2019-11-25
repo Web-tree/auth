@@ -26,7 +26,7 @@ module.exports.authorize = async (event, context, callback) => {
         }
       });
     });
-    request.on('error', e => reject(e.message));
+    request.on('error', e => reject(JSON.stringify(e)));
 
     request.write(token);
     request.end();
