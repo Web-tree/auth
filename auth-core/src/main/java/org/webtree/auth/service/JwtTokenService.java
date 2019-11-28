@@ -15,6 +15,7 @@ import org.webtree.auth.exception.AuthenticationException;
 import org.webtree.auth.time.TimeProvider;
 import org.webtree.auth.util.KeyUtil;
 
+import javax.annotation.PostConstruct;
 import java.security.KeyPair;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,7 +25,6 @@ import java.util.function.Function;
 @Service
 public class JwtTokenService {
     private static final Logger LOG = LoggerFactory.getLogger(JwtTokenService.class);
-    private static final String PKCS_12 = "PKCS12";
     private static final SignatureAlgorithm ALGORITHM = SignatureAlgorithm.RS256;
 
     @Value("#{AuthPropertiesBean.jwt.secret}")
@@ -42,8 +42,12 @@ public class JwtTokenService {
     @Autowired
     public JwtTokenService(TimeProvider timeProvider) {
         this.timeProvider = timeProvider;
-        this.keyPair = new KeyPair(KeyUtil.getPublicKey(publicKey.getBytes(), PKCS_12),
-                KeyUtil.getPrivateKey(privateKey.getBytes(), PKCS_12));
+    }
+
+    @PostConstruct
+    private void postInit() {
+        this.keyPair = new KeyPair(KeyUtil.getPublicKey(publicKey.getBytes(), ALGORITHM.getFamilyName()),
+                KeyUtil.getPrivateKey(privateKey.getBytes(), ALGORITHM.getFamilyName()));
     }
 
     public String getUsernameFromToken(String token) {

@@ -17,18 +17,14 @@ public class KeyUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyUtil.class);
 
     public static PublicKey getPublicKey(byte[] keyBytes, String algorithm) {
-        PublicKey publicKey = null;
         try {
             KeyFactory kf = KeyFactory.getInstance(algorithm);
-            EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
-            publicKey = kf.generatePublic(keySpec);
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.error("Could not reconstruct the public key, the given algorithm could not be found.");
-        } catch (InvalidKeySpecException e) {
+            EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
+            return kf.generatePublic(keySpec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             LOGGER.error("Could not reconstruct the public key");
+            throw new RuntimeException(e);
         }
-
-        return publicKey;
     }
 
     public static PrivateKey getPrivateKey(byte[] keyBytes, String algorithm) {

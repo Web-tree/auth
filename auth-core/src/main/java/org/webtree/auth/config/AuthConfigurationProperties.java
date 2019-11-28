@@ -17,7 +17,6 @@ public class AuthConfigurationProperties {
      */
     private Class<? extends AuthDetails> authDetailsClass = AuthDetails.class;
 
-
     /**
      * Frontend origin for CORS policy.
      */
