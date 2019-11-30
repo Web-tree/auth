@@ -1,6 +1,8 @@
 package org.webtree.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,7 @@ import org.webtree.auth.time.TimeProvider;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
@@ -56,35 +59,7 @@ class AuthControllerTest {
     @BeforeEach
     void setUp() {
         authDetails = new AuthDetails(USERNAME, PASSWORD);
-    }
-
-    @Nested
-    class Registration {
-
-        @Test
-        void shouldReturnOkIfUserDoesNotExist() throws Exception {
-            when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.empty());
-            when(authRepository.save(any())).thenReturn(User.builder().withId(ID).withUsername(USERNAME).withPassword(PASSWORD).build());
-            mockMvc
-                    .perform(post("/rest/user/register")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(authDetails)))
-                    .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.id").value(ID))
-                    .andExpect(jsonPath("$.username").value(USERNAME))
-                    .andExpect(jsonPath("$.password").doesNotExist())
-            ;
-        }
-
-        @Test
-        void shouldReturnBadRequestIfUserExist() throws Exception {
-            when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.of(User.builder().build()));
-            mockMvc
-                    .perform(post("/rest/user/register")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(authDetails)))
-                    .andExpect(status().isBadRequest());
-        }
+        when(timeProvider.now()).thenReturn(new Date());
     }
 
     @Test
@@ -136,6 +111,61 @@ class AuthControllerTest {
 
         mockMvc.perform(
                 post("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(expiredToken)
-        ).andExpect(status().isUnauthorized());
+        )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value(new StringPatternMatcher("JWT expired at .*. Current time: .*, a difference of .* milliseconds.  Allowed clock skew: .* milliseconds.")));
+    }
+
+    @Nested
+    class Registration {
+
+        @Test
+        void shouldReturnOkIfUserDoesNotExist() throws Exception {
+            when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.empty());
+            when(authRepository.save(any())).thenReturn(User.builder().withId(ID).withUsername(USERNAME).withPassword(PASSWORD).build());
+            mockMvc
+                    .perform(post("/rest/user/register")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(authDetails)))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.id").value(ID))
+                    .andExpect(jsonPath("$.username").value(USERNAME))
+                    .andExpect(jsonPath("$.password").doesNotExist())
+            ;
+        }
+
+        @Test
+        void shouldReturnBadRequestIfUserExist() throws Exception {
+            when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.of(User.builder().build()));
+            mockMvc
+                    .perform(post("/rest/user/register")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(authDetails)))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+    static class StringPatternMatcher extends BaseMatcher<String> {
+
+        private final String pattern;
+        private final Pattern compiledPattern;
+
+        private StringPatternMatcher(String pattern) {
+            this.pattern = pattern;
+            compiledPattern = Pattern.compile(pattern);
+        }
+
+        public static StringPatternMatcher of(String pattern) {
+            return new StringPatternMatcher(pattern);
+        }
+
+        @Override public boolean matches(Object testingString) {
+            return testingString instanceof String
+                    && compiledPattern.matcher((String) testingString).matches();
+        }
+
+        @Override public void describeTo(Description description) {
+            description.appendText("pattern - ");
+            description.appendText(pattern);
+        }
     }
 }

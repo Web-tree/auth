@@ -20,7 +20,9 @@ public class AuthControllerAdvice {
 
     @ExceptionHandler({ JwtTokenService.InvalidTokenException.class, ExpiredJwtException.class })
     public ResponseEntity<?> unauthorizedHandler(Exception e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("{\"message\":\"" + e.getMessage() + "\"}");
     }
 
     @ExceptionHandler(AuthenticationService.UserAlreadyRegistered.class)
