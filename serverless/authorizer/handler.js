@@ -18,11 +18,14 @@ module.exports.authorize = async (event, context, callback) => {
     let request = https.request(options, res =>{
       console.log(res.statusCode);
       console.log(res.statusMessage);
-      res.on('data', user => {
+      res.on('data', data => {
+        data = JSON.parse(data);
         if (res.statusCode === 200) {
-          resolve(generatePolicy(JSON.parse(user), 'Allow', event.methodArn));
+          resolve(generatePolicy(data, 'Allow', event.methodArn));
         } else {
-          reject(JSON.parse(user));
+          data.statusCode = res.statusCode;
+          callback(res.statusMessage, data.message);
+          resolve();
         }
       });
     });
