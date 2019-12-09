@@ -18,3 +18,5 @@ Thumbs.db
 .k8s/secrets/encoderSalt
 .k8s/secrets/jwtSecret
 .k8s/secrets/repoUrl
+.k8s/secrets/publicKey.pem
+.k8s/secrets/privateKey.pem

@@ -16,7 +16,10 @@ import org.webtree.auth.time.TimeProvider;
 import org.webtree.auth.util.KeyUtil;
 
 import javax.annotation.PostConstruct;
+import java.math.BigInteger;
 import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,29 +28,21 @@ import java.util.function.Function;
 @Service
 public class JwtTokenService {
     private static final Logger LOG = LoggerFactory.getLogger(JwtTokenService.class);
-    private static final SignatureAlgorithm ALGORITHM = SignatureAlgorithm.RS256;
 
     @Value("#{AuthPropertiesBean.jwt.secret}")
     private String secret;
-    @Value("#{AuthPropertiesBean.jwt.privateKey}")
-    private String privateKey;
-    @Value("#{AuthPropertiesBean.jwt.publicKey}")
-    private String publicKey;
     @Value("#{AuthPropertiesBean.jwt.expiration}")
     private Long expiration;
     private KeyPair keyPair;
+    private final SignatureAlgorithm signatureAlgorithm;
 
     private TimeProvider timeProvider;
 
     @Autowired
-    public JwtTokenService(TimeProvider timeProvider) {
+    public JwtTokenService(TimeProvider timeProvider, KeyPair keyPair, SignatureAlgorithm signatureAlgorithm) {
         this.timeProvider = timeProvider;
-    }
-
-    @PostConstruct
-    private void postInit() {
-        this.keyPair = new KeyPair(KeyUtil.getPublicKey(publicKey.getBytes(), ALGORITHM.getFamilyName()),
-                KeyUtil.getPrivateKey(privateKey.getBytes(), ALGORITHM.getFamilyName()));
+        this.keyPair = keyPair;
+        this.signatureAlgorithm = signatureAlgorithm;
     }
 
     public String getUsernameFromToken(String token) {
@@ -93,6 +88,10 @@ public class JwtTokenService {
         this.expiration = expiration;
     }
 
+    public void setKeyPair(KeyPair keyPair) {
+        this.keyPair = keyPair;
+    }
+
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(keyPair.getPublic())
@@ -126,7 +125,7 @@ public class JwtTokenService {
                 .setId(id)
                 .setIssuedAt(createdDate)
                 .setExpiration(expirationDate)
-                .signWith(ALGORITHM, keyPair.getPrivate())
+                .signWith(signatureAlgorithm, keyPair.getPrivate())
                 .compact();
     }
 
@@ -145,7 +144,7 @@ public class JwtTokenService {
 
         return Jwts.builder()
                 .setClaims(claims)
-                .signWith(ALGORITHM, keyPair.getPrivate())
+                .signWith(signatureAlgorithm, keyPair.getPrivate())
                 .compact();
     }
 
