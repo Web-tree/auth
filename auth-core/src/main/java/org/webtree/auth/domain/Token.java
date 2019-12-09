@@ -1,5 +1,13 @@
 package org.webtree.auth.domain;
 
-public interface Token {
-    String getToken();
+public class Token {
+    private final String token;
+
+    public Token(String token) {
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
+    }
 }

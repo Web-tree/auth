@@ -1,6 +1,6 @@
 package org.webtree.auth.controller;
 
-
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,9 +18,11 @@ public class AuthControllerAdvice {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
-    @ExceptionHandler(JwtTokenService.InvalidTokenException.class)
-    public ResponseEntity<?> unauthorizedHandler(JwtTokenService.InvalidTokenException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    @ExceptionHandler({ JwtTokenService.InvalidTokenException.class, ExpiredJwtException.class })
+    public ResponseEntity<?> unauthorizedHandler(Exception e) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("{\"message\":\"" + e.getMessage() + "\"}");
     }
 
     @ExceptionHandler(AuthenticationService.UserAlreadyRegistered.class)
