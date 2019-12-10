@@ -14,7 +14,7 @@ import java.util.Base64;
 public class KeyUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyUtil.class);
     private static final String SPACES_REGEX = "\\s*";
-    private static final String COMMENTS_REGEX = "-----.*-----";
+    private static final String COMMENTS_REGEX = "-----[A-Z]+-----";
 
     public static PublicKey getPublicKey(String publicKey, String algorithm) {
         try {
