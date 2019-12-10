@@ -50,6 +50,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public Token login(AuthDetails authDetails) {
         User user = repository.findByUsername(
                 authDetails.getUsername()).orElseThrow(() -> new BadCredentialsException("Wrong password or username"));
-        return () -> jwtTokenService.generateToken(user);
+        return new Token(jwtTokenService.generateToken(user));
     }
 }
