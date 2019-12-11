@@ -21,7 +21,7 @@
         <model-modelMapper.version>2.1.0</model-modelMapper.version>
         <assert-j-core.version>3.11.1</assert-j-core.version>
         <mockito-core.version>2.22.0</mockito-core.version>
-        <jackson-data-bind>2.9.4</jackson-data-bind>
+        <jackson-data-bind>2.9.10.1</jackson-data-bind>
         <mockito-version>2.28.2</mockito-version>
         <testcontainer.version>1.11.3</testcontainer.version>
     </properties>
