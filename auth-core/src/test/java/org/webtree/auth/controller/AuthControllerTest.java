@@ -47,7 +47,7 @@ class AuthControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private AuthenticationService service;
+    private AuthenticationService authenticationService;
     @MockBean
     private AuthRepository authRepository;
     @MockBean
@@ -63,7 +63,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void whenLoginWithExistedUser_shouldReturnToken() throws Exception {
+    void whenLoginWithExistedUser_shouldReturnValidToken() throws Exception {
         User user = User.builder().withId(ID).withUsername(USERNAME).withPassword(PASSWORD).build();
         when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
 
@@ -74,7 +74,7 @@ class AuthControllerTest {
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").isNotEmpty())
-                .andReturn();
+                .andExpect(jsonPath("$.token").value(new TokenMatcher()));
     }
 
     @Test
@@ -82,7 +82,7 @@ class AuthControllerTest {
         User user = User.builder().withId(ID).withUsername(USERNAME).withPassword(PASSWORD).build();
         when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
 
-        Token token = service.login(authDetails);
+        Token token = authenticationService.login(authDetails);
         mockMvc.perform(
                 post("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(token.getToken())
         ).andExpect(status().isOk())
@@ -105,7 +105,7 @@ class AuthControllerTest {
         when(authRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
         reset(timeProvider);
         when(timeProvider.now()).thenReturn(new Date(0));
-        String expiredToken = service.login(authDetails).getToken();
+        String expiredToken = authenticationService.login(authDetails).getToken();
         reset(timeProvider);
         when(timeProvider.now()).thenReturn(new Date());
 
@@ -113,7 +113,7 @@ class AuthControllerTest {
                 post("/rest/checkToken").contentType(MediaType.APPLICATION_JSON).content(expiredToken)
         )
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.message").value(new StringPatternMatcher("JWT expired at .*. Current time: .*, a difference of .* milliseconds.  Allowed clock skew: .* milliseconds.")));
+                .andExpect(jsonPath("$.message").value(StringPatternMatcher.of("JWT expired at .*. Current time: .*, a difference of .* milliseconds.  Allowed clock skew: .* milliseconds.")));
     }
 
     @Nested
@@ -166,6 +166,18 @@ class AuthControllerTest {
         @Override public void describeTo(Description description) {
             description.appendText("pattern - ");
             description.appendText(pattern);
+        }
+    }
+
+    class TokenMatcher extends BaseMatcher<String> {
+        @Override public boolean matches(Object o) {
+            User user = authenticationService.decodeToken(o.toString());
+            return ID.equals(user.getId())
+                    && USERNAME.equals(user.getUsername());
+        }
+
+        @Override public void describeTo(Description description) {
+
         }
     }
 }

@@ -46,6 +46,16 @@ spec:
                 secretKeyRef:
                   name: auth
                   key: jwtSecret
+            - name: AUTH_JWT_PUBLICKEY
+              valueFrom:
+                secretKeyRef:
+                  name: auth
+                  key: publicKey.pem
+            - name: AUTH_JWT_PRIVATEKEY
+              valueFrom:
+                secretKeyRef:
+                  name: auth
+                  key: privateKey.pem
             - name: AUTH_REPO_URL
               valueFrom:
                 secretKeyRef:

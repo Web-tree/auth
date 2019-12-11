@@ -10,6 +10,23 @@ auth:
     salt: 7a72815eaaea468012770bacd16a579ca44a6339
   jwt:
     secret: kxpQ4g5vmuQN6XqYVqLbg55ckZVBu3EkhPpY8r7hZgVciLKG0DGi0ZYn3Ua4qTZonbvcPr44CbizwHBMt5LonGSMrx3OCixBFLyVyG8ABsygpIeJOv3rwWEh6TSLPYFgLXN3KTRh2ZUbEAWFqgKOOXlURJnzpx4UaeeWhNdnw4gJ0AvIKFQjy2d8HW6SBussyIDKL2GU
+    publicKey: >
+      -----BEGIN PUBLIC KEY-----
+      MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKoPxmz/O74XKpFQ/tGpqLxgRsXfHdUl
+      TMf2j75Zl0r9+xM9cV0xcDYjCShcXN6+A6MWhHJ27VyCOcSKklDOoo0CAwEAAQ==
+      -----END PUBLIC KEY-----
+    privateKey: >
+      -----BEGIN PRIVATE KEY-----
+      MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEAqg/GbP87vhcqkVD+
+      0amovGBGxd8d1SVMx/aPvlmXSv37Ez1xXTFwNiMJKFxc3r4DoxaEcnbtXII5xIqS
+      UM6ijQIDAQABAkBPUhxTKplLCLMqJIU2ddPmSWG5WWAo0sUFX9OcDV2r9BegwKFv
+      zgPkBoJqdMfvvqyf0lG7Hp/F+HT9Q6JDW3BhAiEA4qHT4DHzj4DdH+5FDY5Dq9cu
+      HDMiHj90e/gOKzeZ4ksCIQDAGU6/3OzpvFrT2K60pQqNrPaqMe2920JxtTt8R0DH
+      hwIhAIX58v5LqVfBb3eL7SiJXLn+mFS1acsF6j/LMd0cno0nAiEAnLMIPhIlX/U5
+      0h2rRchrd25kOClKWdkFtmO0BojJGvkCIA1/QLlFicJgCkOb2PfVNDve7ZxpGuHY
+      TEhV4Ei7zcyM
+      -----END PRIVATE KEY-----
+
   repo:
     url: "http://localhost:3000"
     token: someToken
