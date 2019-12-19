@@ -132,10 +132,6 @@ public class User implements UserDetails {
         private UserBuilder() {
         }
 
-        public static UserBuilder anUser() {
-            return new UserBuilder();
-        }
-
         public UserBuilder withId(String id) {
             this.id = id;
             return this;

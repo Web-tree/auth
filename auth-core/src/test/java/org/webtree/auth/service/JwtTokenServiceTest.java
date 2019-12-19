@@ -6,8 +6,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.webtree.auth.domain.User;
 import org.webtree.auth.exception.AuthenticationException;
 import org.webtree.auth.time.TimeProvider;
@@ -19,24 +21,25 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@ExtendWith({ SpringExtension.class })
 class JwtTokenServiceTest {
     private static final String TEST_USERNAME = "testUser";
     private static final String USER_ID = "someUserId";
     private static final String PASSWORD = "someUserPassword";
+    public static final long ONE_HOUR = 3600L;
 
-    @Mock
+    @MockBean
     private TimeProvider timeProviderMock;
 
     private User user;
 
-    @InjectMocks
+    @Autowired
     private JwtTokenService jwtTokenService;
 
     @BeforeEach
     void setUp() {
-        jwtTokenService.setExpiration(3600L);
-        jwtTokenService.setSecret("mySecret");
+        jwtTokenService.setExpiration(ONE_HOUR);
         user = User.builder()
                 .withId(USER_ID)
                 .withUsername(TEST_USERNAME)
@@ -72,7 +75,6 @@ class JwtTokenServiceTest {
         assertThatThrownBy(() -> jwtTokenService.getUsernameFromToken(token))
                 .isExactlyInstanceOf(AuthenticationException.class);
     }
-
 
     @Test
     void getCreatedDateFromToken() {
