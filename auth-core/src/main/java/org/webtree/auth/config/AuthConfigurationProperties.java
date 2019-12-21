@@ -20,7 +20,7 @@ public class AuthConfigurationProperties {
     /**
      * Frontend origin for CORS policy.
      */
-    private String frontendOrigin = "https://*.webtree.org";
+    private String frontendOrigin;
 
     public Class<? extends AuthDetails> getAuthDetailsClass() {
         return authDetailsClass;

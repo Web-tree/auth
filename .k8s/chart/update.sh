@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 helm dependency update
-helm upgrade auth .
+helm upgrade --recreate-pods auth .

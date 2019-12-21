@@ -30,3 +30,5 @@ auth:
   repo:
     url: "http://localhost:3000"
     token: someToken
+
+  frontendOrigin: "*"
