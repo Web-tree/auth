@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,6 +26,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -55,11 +57,18 @@ class AuthControllerTest {
     private AuthDetails authDetails;
     @Autowired
     private ObjectMapper objectMapper;
+    @Value("#{AuthPropertiesBean.frontendOrigin}")
+    private String origin;
 
     @BeforeEach
     void setUp() {
         authDetails = new AuthDetails(USERNAME, PASSWORD);
         when(timeProvider.now()).thenReturn(new Date());
+    }
+
+    @Test
+    void shouldHasStarOrigin() {
+        assertThat(origin).isEqualTo("*");
     }
 
     @Test
