@@ -6,3 +6,5 @@ mysql:
 ingress:
   hosts:
     - host: "auth-dev.webtree.org"
+      paths:
+        - /rest
