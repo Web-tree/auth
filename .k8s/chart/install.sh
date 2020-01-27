@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 helm dependency update
-helm install --name=auth --namespace=webtree .
+helm install auth --namespace=webtree .
