@@ -1,3 +1,5 @@
+org: webtree
+app: authorizer
 service: authorizer
 
 provider:

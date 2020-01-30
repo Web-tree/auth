@@ -6,7 +6,7 @@ module.exports.authorize = async (event, context, callback) => {
     const token = event.authorizationToken;
     console.log(token);
     const options = {
-      hostname: 'auth.webtree.org',
+      hostname: 'auth-api.webtree.org',
       port: 443,
       path: '/rest/checkToken',
       method: 'POST',
