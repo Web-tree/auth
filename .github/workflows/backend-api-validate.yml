@@ -2,7 +2,8 @@ name: Java CI
 
 on:
   push:
-    path:
+    paths:
+      - .github/workflows/backend-api-validate.yml
       - ./backend/auth-api
 
 jobs:
@@ -17,4 +18,4 @@ jobs:
         java-version: 11
     - name: Run test
       working-directory: ./backend/auth-api
-      run: ./gradlew test
+      run: chmod +x gradlew && ./gradlew test
