@@ -1,7 +1,3 @@
-# Travis build
-
-[![Build Status](https://travis-ci.org/Web-tree/auth.svg?branch=master)](https://travis-ci.org/Web-tree/auth)
-
 
 # Github actions
 
