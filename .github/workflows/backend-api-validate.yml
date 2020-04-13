@@ -1,0 +1,20 @@
+name: Java CI
+
+on:
+  push:
+    path:
+      - ./backend/auth-api
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+    - name: Run test
+      working-directory: ./backend/auth-api
+      run: ./gradlew test
