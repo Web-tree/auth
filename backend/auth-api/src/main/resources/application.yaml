@@ -26,6 +26,14 @@ auth:
       0h2rRchrd25kOClKWdkFtmO0BojJGvkCIA1/QLlFicJgCkOb2PfVNDve7ZxpGuHY
       TEhV4Ei7zcyM
       -----END PRIVATE KEY-----
+    expiration: 604800
+    header: "Authorization"
+
+  route:
+    register: "/rest/user/register"
+    login: "/rest/token/new"
+    socialLogin: "/rest/social/login"
+    checkToken: "/rest/checkToken"
 
   repo:
     url: "http://localhost:3000"

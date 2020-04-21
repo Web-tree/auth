@@ -13,13 +13,8 @@ import org.springframework.stereotype.Service;
 import org.webtree.auth.domain.User;
 import org.webtree.auth.exception.AuthenticationException;
 import org.webtree.auth.time.TimeProvider;
-import org.webtree.auth.util.KeyUtil;
 
-import javax.annotation.PostConstruct;
-import java.math.BigInteger;
 import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +24,9 @@ import java.util.function.Function;
 public class JwtTokenService {
     private static final Logger LOG = LoggerFactory.getLogger(JwtTokenService.class);
 
-    @Value("#{AuthPropertiesBean.jwt.secret}")
+    @Value("${auth.jwt.secret}")
     private String secret;
-    @Value("#{AuthPropertiesBean.jwt.expiration}")
+    @Value("${auth.jwt.expiration}")
     private Long expiration;
     private KeyPair keyPair;
     private final SignatureAlgorithm signatureAlgorithm;

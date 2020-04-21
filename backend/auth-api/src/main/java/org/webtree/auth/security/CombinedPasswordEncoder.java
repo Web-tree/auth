@@ -20,8 +20,8 @@ public class CombinedPasswordEncoder implements PasswordEncoder {
     private TextEncryptor encryptor;
 
     @Autowired
-    public CombinedPasswordEncoder(@Value("#{AuthPropertiesBean.encoder.password}") String password,
-                                   @Value("#{AuthPropertiesBean.encoder.salt}") String salt) {
+    public CombinedPasswordEncoder(@Value("${auth.encoder.password}") String password,
+                                   @Value("${auth.encoder.salt}") String salt) {
         encoder = new BCryptPasswordEncoder();
         encryptor = Encryptors.delux(password, salt);
     }

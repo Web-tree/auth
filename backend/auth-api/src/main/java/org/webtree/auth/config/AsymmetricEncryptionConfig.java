@@ -29,9 +29,9 @@ import java.security.PublicKey;
 public class AsymmetricEncryptionConfig {
     public static final SignatureAlgorithm ALGORITHM = SignatureAlgorithm.RS256;
 
-    @Value("#{AuthPropertiesBean.jwt.privateKey}")
+    @Value("${auth.jwt.privateKey}")
     private String privateKey;
-    @Value("#{AuthPropertiesBean.jwt.publicKey}")
+    @Value("${auth.jwt.publicKey}")
     private String publicKey;
 
     @Bean

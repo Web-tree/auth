@@ -41,7 +41,7 @@ dependencies {
     testImplementation 'org.testcontainers:mysql:1.11.3'
 }
 
-group = 'org.webtree.auth'
+group = 'org.webtree.auth-api'
 version = '0.0.1'
 sourceCompatibility = '1.8'
 
