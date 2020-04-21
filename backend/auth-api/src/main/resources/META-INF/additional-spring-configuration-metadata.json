@@ -9,5 +9,26 @@
       "name": "auth.repo.token",
       "type": "java.lang.String",
       "description": "Authorisation token."
+    },
+    {
+      "name": "auth.route.register",
+      "type": "java.lang.String",
+      "description": "Registration route."
+    },
+    {
+      "name": "auth.route.login",
+      "type": "java.lang.String",
+      "description": "Login route."
+    },
+    {
+      "name": "auth.route.socialLogin",
+      "type": "java.lang.String",
+      "description": "Social login route. Not used for this moment."
+    },
+    {
+      "name": "auth.route.checkToken",
+      "type": "java.lang.String",
+      "description": "Check token route."
     }
-  ] }
+  ]
+}

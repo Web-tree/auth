@@ -24,18 +24,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final AuthenticationService userService;
     private final JwtTokenService tokenUtil;
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
-    private AuthConfigurationProperties properties;
-
 
     @Autowired
     public SecurityConfig(AuthenticationService userService,
-                          JwtTokenService tokenUtil,
-                          JwtAuthenticationEntryPoint unauthorizedHandler,
-                          AuthConfigurationProperties properties) {
+            JwtTokenService tokenUtil,
+            JwtAuthenticationEntryPoint unauthorizedHandler) {
         this.userService = userService;
         this.tokenUtil = tokenUtil;
         this.unauthorizedHandler = unauthorizedHandler;
-        this.properties = properties;
     }
 
     @Autowired
@@ -73,14 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .authorizeRequests()
                 //.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                .antMatchers(
-                        properties.getRoute().getLogin(),
-                        properties.getRoute().getRegister(),
-                        properties.getRoute().getSocialLogin(),
-                        properties.getRoute().getCheckToken()
-                ).permitAll()
-                .anyRequest().authenticated();
+                .anyRequest().permitAll();
 
         // Custom JWT based security filter
         httpSecurity

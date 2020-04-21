@@ -57,7 +57,7 @@ class AuthControllerTest {
     private AuthDetails authDetails;
     @Autowired
     private ObjectMapper objectMapper;
-    @Value("#{AuthPropertiesBean.frontendOrigin}")
+    @Value("${auth.frontendOrigin}")
     private String origin;
 
     @BeforeEach
