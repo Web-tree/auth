@@ -29,7 +29,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           workdir: ./backend/auth-api
-          tags: ${{ steps.release-version.outputs.result }}
+          tags: "${{ steps.release-version.outputs.result }}"
 
       - name: Create Release
         id: create_release
@@ -37,7 +37,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.run_number	 }}
+          tag_name: ${{ steps.release-version.outputs.result }}
           release_name: ${{ steps.release-version.outputs.result }}
           draft: false
           prerelease: false
