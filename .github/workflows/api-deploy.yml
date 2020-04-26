@@ -49,6 +49,7 @@ jobs:
         with:
           kubeconfig: '${{ secrets.PROD_KUBECONFIG }}'
           exec: | 
+            cd backend/auth-api
             helm repo add stable https://kubernetes-charts.storage.googleapis.com
             helm repo update
             helm dependency update
