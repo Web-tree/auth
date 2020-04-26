@@ -4,6 +4,7 @@ on:
   push:
     branches: 
       - master
+      - api-deploy
     paths:
       - ./.github/workflows/api-deploy.yml
       - ./backend/auth-api
@@ -12,10 +13,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Lint Helm
+      
+      - name: Generate version name
+        id: release-version
+        uses: actions/github-script@0.2.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+              return auth-api-${{ github.run_number }};
+
+      - name: Publish Docker
+        uses: elgohr/Publish-Docker-Github-Action@2.14
+        with:
+          name: webtree/auth
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          workdir: ./backend/auth-api
+          tags: ${{ steps.release-version.outputs.result }}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number	 }}
+          release_name: ${{ steps.release-version.outputs.result }}
+          draft: false
+          prerelease: false
+      
+      - name: Upgrade helm chart
         uses: WyriHaximus/github-action-helm3@v1.0.0
         with:
           kubeconfig: '${{ secrets.PROD_KUBECONFIG }}'
           exec: | 
             helm dependency update
-            helm upgrade auth . -n webtree
+            helm upgrade auth . -n webtree --set image.tag=${{ steps.release-version.outputs.result }}
