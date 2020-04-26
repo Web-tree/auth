@@ -2,8 +2,9 @@ name: Java CI
 
 on:
   push:
-    path:
+    paths:
       - ./backend/auth-api
+      - .github/workflows/backend-api-validate.yml
 
 jobs:
   validate:
