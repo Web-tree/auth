@@ -20,7 +20,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-              return 'auth.api.' + ${{ github.run_number }};
+              return 'auth-api-' + ${{ github.run_number }};
 
       - name: Docker Build & Push
         uses: mr-smithers-excellent/docker-build-push@v3.1
