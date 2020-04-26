@@ -20,7 +20,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-              return auth-api-${{ github.run_number }};
+              return 'auth-api-' + ${{ github.run_number }};
 
       - name: Publish Docker
         uses: elgohr/Publish-Docker-Github-Action@2.14
