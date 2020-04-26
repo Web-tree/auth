@@ -1,0 +1,21 @@
+name: Auth API deploy
+
+on:
+  push:
+    branches: 
+      - master
+    paths:
+      - ./.github/workflows/api-deploy.yml
+      - ./backend/auth-api
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Lint Helm
+        uses: WyriHaximus/github-action-helm3@v1.0.0
+        with:
+          kubeconfig: '${{ secrets.PROD_KUBECONFIG }}'
+          exec: | 
+            helm dependency update
+            helm upgrade auth . -n webtree
