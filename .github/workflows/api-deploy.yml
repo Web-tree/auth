@@ -30,6 +30,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           directory: ./backend/auth-api
+          dockerfile: ./backend/auth-api/Dockerfile
           tags: "${{ steps.release-version.outputs.result }}"
 
       - name: Create Release
