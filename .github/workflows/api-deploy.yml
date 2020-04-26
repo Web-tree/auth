@@ -49,5 +49,7 @@ jobs:
         with:
           kubeconfig: '${{ secrets.PROD_KUBECONFIG }}'
           exec: | 
+            helm repo add stable https://kubernetes-charts.storage.googleapis.com
+            helm repo update
             helm dependency update
             helm upgrade auth . -n webtree --set image.tag=${{ steps.release-version.outputs.result }}
