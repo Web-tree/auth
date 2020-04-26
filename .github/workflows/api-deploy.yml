@@ -6,7 +6,7 @@ on:
       - master
       - api-deploy
     paths:
-      - ./.github/workflows/api-deploy.yml
+      - .github/workflows/api-deploy.yml
       - ./backend/auth-api
 jobs:
   deploy:
