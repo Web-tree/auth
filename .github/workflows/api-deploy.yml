@@ -60,3 +60,9 @@ jobs:
             helm repo update
             helm dependency update
             helm upgrade auth . -n webtree --set image.tag=${{ steps.release-version.outputs.result }}
+      
+      - name: Delete
+        if: ${{ failure() }}
+        uses: ame-yu/action-delete-latest-release@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
