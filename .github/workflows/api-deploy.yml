@@ -49,6 +49,7 @@ jobs:
         run: |-
           #gcloud config set project ${{ secrets.GKE_PROJECT }}
           gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+          gcloud components install kubectl
           kubectl get nodes
       
       - name: Upgrade helm chart
