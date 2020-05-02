@@ -8,6 +8,11 @@ on:
     paths:
       - .github/workflows/api-deploy.yml
       - ./backend/auth-api
+
+env:
+  GKE_CLUSTER: webtree-prod
+  GKE_ZONE: europe-west3-a
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
