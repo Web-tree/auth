@@ -50,11 +50,11 @@ jobs:
           version: '290.0.1'
           service_account_key: ${{ secrets.GKE_SA_KEY }}
           project_id: ${{ secrets.GKE_PROJECT }}
-      
       - name: Upgrade helm chart
         uses: WyriHaximus/github-action-helm3@v1.0.0
         with:
-          exec: | 
+          exec: |
+            gcloud init --console-only
             cd .k8s/chart
             helm repo add stable https://kubernetes-charts.storage.googleapis.com
             helm repo update
