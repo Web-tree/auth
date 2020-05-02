@@ -27,17 +27,6 @@ jobs:
           script: |
               return 'auth-api-' + ${{ github.run_number }};
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.release-version.outputs.result }}
-          release_name: ${{ steps.release-version.outputs.result }}
-          draft: false
-          prerelease: false
-
       - name: Docker Build & Push
         uses: mr-smithers-excellent/docker-build-push@v3.1
         with:
@@ -58,7 +47,7 @@ jobs:
       
       - name: Get the GKE credentials so we can deploy to the cluster
         run: |-
-          gcloud container clusters get-credentials "$GKE_CLUSTER"
+          gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
       
       - name: Upgrade helm chart
         uses: WyriHaximus/github-action-helm3@v1.0.0
@@ -70,8 +59,13 @@ jobs:
             helm dependency update
             helm upgrade auth . -n webtree --set image.tag=${{ steps.release-version.outputs.result }}
       
-      - name: Delete
-        if: ${{ failure() }}
-        uses: ame-yu/action-delete-latest-release@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ steps.release-version.outputs.result }}
+          release_name: ${{ steps.release-version.outputs.result }}
+          draft: false
+          prerelease: false
