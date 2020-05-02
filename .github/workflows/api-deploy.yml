@@ -44,10 +44,16 @@ jobs:
           draft: false
           prerelease: false
       
+      - name: Setup gcloud CLI
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '290.0.1'
+          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          project_id: ${{ secrets.GKE_PROJECT }}
+      
       - name: Upgrade helm chart
         uses: WyriHaximus/github-action-helm3@v1.0.0
         with:
-          kubeconfig: '${{ secrets.PROD_KUBECONFIG }}'
           exec: | 
             cd .k8s/chart
             helm repo add stable https://kubernetes-charts.storage.googleapis.com
