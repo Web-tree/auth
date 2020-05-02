@@ -47,7 +47,7 @@ jobs:
       
       - name: Get the GKE credentials so we can deploy to the cluster
         run: |-
-          gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+          gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE" --project "${{ secrets.GKE_PROJECT }}"
       
       - name: Upgrade helm chart
         uses: WyriHaximus/github-action-helm3@v1.0.0
