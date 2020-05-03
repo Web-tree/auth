@@ -1,0 +1,87 @@
+name: Auth API deploy
+
+on:
+  push:
+    branches: 
+      - master
+    paths:
+      - .github/workflows/api-deploy.yml
+      - ./backend/auth-api
+      - .k8s/chart
+
+env:
+  GKE_CLUSTER: webtree-prod
+  GKE_ZONE: europe-west3-a
+  POSTMAN_AUTH_API_ENV: e99169b1-648d-4e5a-b50c-c0458f41e880
+  POSTMAN_AUTH_API_COLLECTION: 11144930-b07a1edc-6884-41b6-a519-ab83394e0f55
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      
+      - name: Generate version name
+        id: release-version
+        uses: actions/github-script@0.2.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+              return 'auth-api-' + ${{ github.run_number }};
+
+      - name: Docker Build & Push
+        uses: mr-smithers-excellent/docker-build-push@v3.1
+        with:
+          image: webtree/auth
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          directory: ./backend/auth-api
+          dockerfile: ./backend/auth-api/Dockerfile
+          tag: ${{ steps.release-version.outputs.result }}
+
+      - name: Setup gcloud CLI
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '290.0.1'
+          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          project_id: ${{ secrets.GKE_PROJECT }}
+      
+      - name: Get the GKE credentials so we can deploy to the cluster
+        run: |-
+          gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+      
+      - name: Install helm
+        uses: azure/setup-helm@v1
+      
+      - name: Upgrade helm chart
+        run: |-
+          cd .k8s/chart
+          helm repo add stable https://kubernetes-charts.storage.googleapis.com
+          helm repo update
+          helm dependency update
+          helm upgrade auth . -n webtree --wait --set image.tag=${{ steps.release-version.outputs.result }}
+      
+      - name: Run endpoint tests
+        uses: matt-ball/newman-action@master
+        with:
+          postmanApiKey: ${{ secrets.POSTMAN_API_KEY }}
+          collection: $POSTMAN_AUTH_API_COLLECTION
+          environment: $POSTMAN_AUTH_API_ENV
+      
+      - name: Rollback if fail
+        if: ${{ failure() }}
+        run: |-
+           helm rollback
+      
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.release-version.outputs.result }}
+          release_name: ${{ steps.release-version.outputs.result }}
+          draft: false
+          prerelease: false
+          body: Release pushed on dockerhub 
