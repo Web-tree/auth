@@ -13,6 +13,8 @@ on:
 env:
   GKE_CLUSTER: webtree-prod
   GKE_ZONE: europe-west3-a
+  POSTMAN_AUTH_API_ENV: e99169b1-648d-4e5a-b50c-c0458f41e880
+  POSTMAN_AUTH_API_COLLECTION: 11144930-b07a1edc-6884-41b6-a519-ab83394e0f55
 
 jobs:
   deploy:
@@ -59,7 +61,14 @@ jobs:
           helm repo add stable https://kubernetes-charts.storage.googleapis.com
           helm repo update
           helm dependency update
-          helm upgrade auth . -n webtree --set image.tag=${{ steps.release-version.outputs.result }}
+          helm upgrade auth . -n webtree --wait --set image.tag=${{ steps.release-version.outputs.result }}
+      
+      - name: Run endpoint tests
+        uses: matt-ball/newman-action@master
+        with:
+          postmanApiKey: ${{ secrets.POSTMAN_API_KEY }}
+          collection: $POSTMAN_AUTH_API_COLLECTION
+          environment: ${{ secrets.postmanAuthApiEnv }}
       
       - name: Create Release
         id: create_release
