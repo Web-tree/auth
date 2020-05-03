@@ -68,7 +68,12 @@ jobs:
         with:
           postmanApiKey: ${{ secrets.POSTMAN_API_KEY }}
           collection: $POSTMAN_AUTH_API_COLLECTION
-          environment: ${{ secrets.postmanAuthApiEnv }}
+          environment: $POSTMAN_AUTH_API_ENV
+      
+      - name: Rollback if fail
+        if: ${{ failure() }}
+        run: |-
+           helm rollback
       
       - name: Create Release
         id: create_release
