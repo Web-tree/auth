@@ -52,18 +52,19 @@ jobs:
           gcloud components install kubectl
           kubectl get nodes
       
+      - name: Install helm
+        uses: azure/setup-helm@v1
+      
       - name: Upgrade helm chart
-        uses: WyriHaximus/github-action-helm3@v1.0.0
-        with:
-          exec: |
-            gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
-            gcloud components install kubectl
-            kubectl get nodes
-            cd .k8s/chart
-            helm repo add stable https://kubernetes-charts.storage.googleapis.com
-            helm repo update
-            helm dependency update
-            helm upgrade auth . -n webtree --set image.tag=${{ steps.release-version.outputs.result }}
+        run: |-
+          gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+          gcloud components install kubectl
+          kubectl get nodes
+          cd .k8s/chart
+          helm repo add stable https://kubernetes-charts.storage.googleapis.com
+          helm repo update
+          helm dependency update
+          helm upgrade auth . -n webtree --set image.tag=${{ steps.release-version.outputs.result }}
       
       - name: Create Release
         id: create_release
