@@ -8,6 +8,7 @@ on:
     paths:
       - .github/workflows/api-deploy.yml
       - ./backend/auth-api
+      - .k8s/chart
 
 env:
   GKE_CLUSTER: webtree-prod
@@ -47,19 +48,13 @@ jobs:
       
       - name: Get the GKE credentials so we can deploy to the cluster
         run: |-
-          #gcloud config set project ${{ secrets.GKE_PROJECT }}
           gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
-          gcloud components install kubectl
-          kubectl get nodes
       
       - name: Install helm
         uses: azure/setup-helm@v1
       
       - name: Upgrade helm chart
         run: |-
-          gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
-          gcloud components install kubectl
-          kubectl get nodes
           cd .k8s/chart
           helm repo add stable https://kubernetes-charts.storage.googleapis.com
           helm repo update
@@ -76,3 +71,4 @@ jobs:
           release_name: ${{ steps.release-version.outputs.result }}
           draft: false
           prerelease: false
+          body: Release pushed on dockerhub 
