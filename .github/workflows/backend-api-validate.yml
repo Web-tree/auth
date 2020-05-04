@@ -19,3 +19,6 @@ jobs:
     - name: Run test
       working-directory: ./backend/auth-api
       run: ./gradlew test
+    - name: Sonar Scan
+      working-directory: ./backend/auth-api
+      run: ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }}
