@@ -28,7 +28,7 @@ ingress:
   hosts:
     - host: auth-api.webtree.org
       paths:
-        - /rest
+        - /
 
   tls: []
   #  - secretName: chart-example-tls
