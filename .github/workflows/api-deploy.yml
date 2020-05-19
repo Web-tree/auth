@@ -6,8 +6,8 @@ on:
       - master
     paths:
       - .github/workflows/api-deploy.yml
-      - backend/auth-api
-      - .k8s/chart
+      - backend/auth-api/**
+      - .k8s/chart/**
 
 env:
   GKE_CLUSTER: webtree-prod
