@@ -13,13 +13,13 @@
 Thumbs.db
 
 #secrets
-.k8s/secrets/repoToken
-.k8s/secrets/encoderPassword
-.k8s/secrets/encoderSalt
-.k8s/secrets/jwtSecret
-.k8s/secrets/repoUrl
-.k8s/secrets/publicKey.pem
-.k8s/secrets/privateKey.pem
+backend/auth-api/.k8s/secrets/repoToken
+backend/auth-api/.k8s/secrets/encoderPassword
+backend/auth-api/.k8s/secrets/encoderSalt
+backend/auth-api/.k8s/secrets/jwtSecret
+backend/auth-api/.k8s/secrets/repoUrl
+backend/auth-api/.k8s/secrets/publicKey.pem
+backend/auth-api/.k8s/secrets/privateKey.pem
 
 # Ignore Gradle project-specific cache directory
 .gradle
