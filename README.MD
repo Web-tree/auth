@@ -8,3 +8,6 @@
 
 ### CD
 ![Auth API deploy](https://github.com/Web-tree/auth/workflows/Auth%20API%20deploy/badge.svg)
+
+### Monitoring
+![Auth API status](https://github.com/Web-tree/monitoring/workflows/Auth%20API%20status/badge.svg?branch=master)
