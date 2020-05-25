@@ -3,7 +3,7 @@ name: Helm Validate
 on:
   push:
     paths:
-      - ./.k8s/chart
+      - ./backend/auth-api/.k8s/chart
       - .github/workflows/helm-validate.yml
 
 jobs:
@@ -14,4 +14,4 @@ jobs:
       - name: Lint Helm
         uses: WyriHaximus/github-action-helm3@v1.0.0
         with:
-          exec: helm lint ./.k8s/chart
+          exec: helm lint ./backend/auth-api/.k8s/chart
