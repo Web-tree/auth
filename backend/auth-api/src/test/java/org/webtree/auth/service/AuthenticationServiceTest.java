@@ -9,10 +9,9 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.webtree.auth.domain.AuthDetails;
 import org.webtree.auth.domain.User;
+import org.webtree.auth.exception.BadCredentialsException;
 import org.webtree.auth.repository.AuthRepository;
 import org.webtree.auth.service.JwtTokenService.InvalidTokenException;
 
@@ -54,18 +53,6 @@ class AuthenticationServiceTest {
     }
 
     @Nested class FindTests {
-        @Test
-        void shouldReturnUserByUsername() {
-            given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.of(user));
-            assertThat(service.loadUserByUsername(TEST_USERNAME)).isEqualTo(user);
-        }
-
-        @Test
-        void shouldThrowExceptionIfUserWasNotFound() {
-            given(repository.findByUsername(TEST_USERNAME)).willReturn(Optional.empty());
-            assertThatThrownBy(() -> service.loadUserByUsername(TEST_USERNAME))
-                    .isInstanceOf(UsernameNotFoundException.class);
-        }
 
         @Test
         void shouldReturnTokenWhenLogin() {
