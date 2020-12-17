@@ -3,7 +3,7 @@ name: Java CI
 on:
   push:
     paths:
-      - ./backend/auth-api
+      - backend/auth-api/**
       - .github/workflows/backend-api-validate.yml
 
 jobs:
