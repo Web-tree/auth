@@ -1,12 +1,11 @@
 package org.webtree.auth.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.webtree.auth.domain.AuthDetails;
 import org.webtree.auth.domain.Token;
 import org.webtree.auth.domain.User;
+import org.webtree.auth.exception.BadCredentialsException;
 import org.webtree.auth.repository.AuthRepository;
 
 @Service
@@ -18,11 +17,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationServiceImpl(JwtTokenService jwtTokenService, AuthRepository repository) {
         this.jwtTokenService = jwtTokenService;
         this.repository = repository;
-    }
-
-    @Override
-    public User loadUserByUsername(String username) throws UsernameNotFoundException {
-        return repository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
     @Override
