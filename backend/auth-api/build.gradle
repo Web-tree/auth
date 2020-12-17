@@ -25,10 +25,9 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("io.jsonwebtoken:jjwt:0.7.0")
-    implementation("io.jsonwebtoken:jjwt-api:0.10.7")
+    implementation("io.jsonwebtoken:jjwt:0.9.1")
+    implementation("io.jsonwebtoken:jjwt-api:0.11.2")
     implementation("org.modelmapper:modelmapper:2.1.0")
-//    implementation("mysql:mysql-connector-java:8.0.13")
     implementation 'org.springframework.security:spring-security-crypto:5.4.2'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.2'
