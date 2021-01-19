@@ -1,5 +1,7 @@
 'use strict';
 
+import {UserRepository} from "./repository/user-repository.mjs";
+
 const connectToDatabase = require('./db');
 
 function HTTPError (statusCode, message) {
@@ -10,9 +12,9 @@ function HTTPError (statusCode, message) {
 
 module.exports.create = async (event) => {
   try {
-    const { User } = await connectToDatabase();
+    // const { User } = await connectToDatabase();
     console.log(event);
-    const user = await User.create(JSON.parse(event.body));
+    const user = await new UserRepository().create(JSON.parse(event.body));
     return {
       statusCode: 200,
       body: JSON.stringify(user)

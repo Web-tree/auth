@@ -1,21 +1,37 @@
-service: auth
+service: auth-repo
 
 custom:
   secrets: ${file(secrets.json)}
 
 provider:
   name: aws
-  runtime: nodejs8.10
+  runtime: nodejs10.x
   timeout: 30
   region: eu-central-1
-  stage: ${self:custom.secrets.NODE_ENV}
+  stage: ${self:custom.secrets.NODE_ENV, dev}
   environment:
+    DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+
     NODE_ENV: ${self:custom.secrets.NODE_ENV}
     DB_NAME: ${self:custom.secrets.DB_NAME}
     DB_USER: ${self:custom.secrets.DB_USER}
     DB_PASSWORD: ${self:custom.secrets.DB_PASSWORD}
     DB_HOST: ${self:custom.secrets.DB_HOST}
     DB_PORT: ${self:custom.secrets.DB_PORT}
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+  exclude:
+    - .dynamodb/**
+    - node_modules/
   vpc:
     securityGroupIds:
       - ${self:custom.secrets.SECURITY_GROUP_ID}
@@ -44,3 +60,36 @@ functions:
 
 plugins:
   - serverless-offline
+  - serverless-dynamodb-local
+
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: username
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: username
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    GatewayResponseUnauthorized:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: UNAUTHORIZED
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+
+package:
+  individually: true
