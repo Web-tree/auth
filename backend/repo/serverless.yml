@@ -2,11 +2,17 @@ service: auth-repo
 
 custom:
   secrets: ${file(secrets.json)}
+  webpack:
+    webpackConfig: 'webpack.config.js'   # Name of webpack configuration file
+    includeModules: true   # Node modules configuration for packaging
+    packager: 'npm'   # Packager that will be used to package your external modules
+    excludeFiles: ./**/*.test.js # Provide a glob for files to ignore
 
 provider:
   name: aws
-  runtime: nodejs10.x
-  timeout: 30
+  runtime: nodejs12.x
+  timeout: 5
+  memorySize: 128
   region: eu-central-1
   stage: ${self:custom.secrets.NODE_ENV, dev}
   environment:
@@ -22,23 +28,26 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action:
+        - dynamodb:DescribeTable
         - dynamodb:Query
         - dynamodb:Scan
         - dynamodb:GetItem
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+      # Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+      Resource: 'arn:aws:dynamodb:eu-central-1:*:*'
+
   exclude:
     - .dynamodb/**
     - node_modules/
-  vpc:
-    securityGroupIds:
-      - ${self:custom.secrets.SECURITY_GROUP_ID}
-    subnetIds:
-      - ${self:custom.secrets.SUBNET1_ID}
-      - ${self:custom.secrets.SUBNET2_ID}
-      - ${self:custom.secrets.SUBNET3_ID}
+#  vpc:
+#    securityGroupIds:
+#      - ${self:custom.secrets.SECURITY_GROUP_ID}
+#    subnetIds:
+#      - ${self:custom.secrets.SUBNET1_ID}
+#      - ${self:custom.secrets.SUBNET2_ID}
+#      - ${self:custom.secrets.SUBNET3_ID}
 
 functions:
   create:
@@ -61,11 +70,13 @@ functions:
 plugins:
   - serverless-offline
   - serverless-dynamodb-local
+  - serverless-webpack
 
 resources:
   Resources:
     usersTable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
       Properties:
         TableName: ${self:provider.environment.DYNAMODB_TABLE}
         AttributeDefinitions:
@@ -77,7 +88,7 @@ resources:
           - AttributeName: id
             KeyType: HASH
           - AttributeName: username
-            KeyType: RANGE
+            KeyType: RANGE          
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
