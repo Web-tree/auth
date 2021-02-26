@@ -1,0 +1,48 @@
+service:
+  name: api
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+      serverless-iam-roles-per-function:
+        defaultInherit: true *# Each function will inherit the service level roles too.
+      globalTables:
+        regions: # list of regions in which you want to set up global tables
+          - us-east-2 # Ohio (default region to date for stack)
+          - ap-southeast-2 # Sydney (lower latency for Australia)
+        createStack: false
+      prune: # automatically prune old lambda versions
+        automatic: true
+        number: 3
+
+# Add the serverless-webpack plugin
+plugins:
+  - serverless-offline
+  - serverless-webpack
+  - serverless-iam-roles-per-function
+  - serverless-create-global-dynamodb-table
+  - serverless-prune-plugin
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'local'}
+  region: ${opt:region, 'eu-central-1'}
+
+  apiGateway:
+    minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
+  environment:
+    DEBUG: '*'
+    NODE_ENV: ${self:provider.stage}
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - http:
+          method: get
+          path: hello
